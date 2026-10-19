@@ -2702,7 +2702,8 @@ function escalar(src, w, h, maxLado){
   return cn;
 }
 
-const MAX_LADO = 4096;   // resolución máxima que se guarda de un mapa
+/*const MAX_LADO = 4096;   // resolución máxima que se guarda de un mapa */
+const MAX_LADO = 8192;   // maximum resolution doubled since huge maps are seeing scaling issues
 const MAX_MINI = 320;    // lado de la miniatura de biblioteca
 const MAX_NIEBLA = 2048; // resolución a la que se guarda la máscara de niebla
 

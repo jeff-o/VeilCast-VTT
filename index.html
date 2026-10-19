@@ -1920,8 +1920,23 @@ async function importarUVTT(file){
       mapSize.y * ppg
     );
   }
+  /* end of debug code */
 
+  /* isolating the assumed basic code that scales the image incorrectly
   const aPx = p => ({x:p.x*ppg, y:p.y*ppg});
+  */
+
+  /* New code that scales based on actual image size */
+  const actualPpgX = escena.w / res.map_size.x;
+  const actualPpgY = escena.h / res.map_size.y;
+  const actualPpg = (actualPpgX + actualPpgY) / 2;
+
+  const aPx = p => ({
+    x: p.x * actualPpg,
+    y: p.y * actualPpg
+  });
+  /* end of new code */
+  
   const muros = [];
   for(const grupo of (d.line_of_sight||[]))
     if(grupo && grupo.length>1) muros.push({pts:grupo.map(aPx), closed:false});

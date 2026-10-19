@@ -1882,10 +1882,18 @@ async function importarUVTT(file){
   try{ d = JSON.parse(await file.text()); }
   catch(err){ toast('"'+file.name+'" is not a valid UVTT file.'); return null; }
 
+  /* Check imported values */
+  console.log("UVTT object:", d);
+  console.log("resolution:", d.resolution);
+  console.log("pixels_per_grid:", d.resolution?.pixels_per_grid);
+
   const res = d.resolution || {};
   const ppg = res.pixels_per_grid || 100;
   const b64 = (d.image||'').split(',').pop();
   if(!b64){ toast('The file has no embedded image.'); return null; }
+
+  /* check to seee whether the ppg value was altered */
+  console.log("ppg:", ppg);
 
   const bin = atob(b64);
   const bytes = new Uint8Array(bin.length);

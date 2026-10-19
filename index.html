@@ -1882,18 +1882,10 @@ async function importarUVTT(file){
   try{ d = JSON.parse(await file.text()); }
   catch(err){ toast('"'+file.name+'" is not a valid UVTT file.'); return null; }
 
-  /* Check imported values */
-  console.log("UVTT object:", d);
-  console.log("resolution:", d.resolution);
-  console.log("pixels_per_grid:", d.resolution?.pixels_per_grid);
-
   const res = d.resolution || {};
   const ppg = res.pixels_per_grid || 100;
   const b64 = (d.image||'').split(',').pop();
   if(!b64){ toast('The file has no embedded image.'); return null; }
-
-  /* check to seee whether the ppg value was altered */
-  console.log("ppg:", ppg);
 
   const bin = atob(b64);
   const bytes = new Uint8Array(bin.length);
@@ -1922,10 +1914,26 @@ async function importarUVTT(file){
   }
   /* end of debug code */
 
-  /* isolating the assumed basic code that scales the image incorrectly
+  /* This code assumes that the image size matches the uvtt metadata, which can result in an image that is scaled incorrectly relative to the walls.
+  So, it is commented out and replaced.
   const aPx = p => ({x:p.x*ppg, y:p.y*ppg});
   */
 
+  /* Debug code that warns if the metadata does not match the actual image size */
+  const expectedW = res.map_size.x * ppg;
+  const expectedH = res.map_size.y * ppg;
+
+  if (
+      Math.abs(expectedW - escena.w) > 2 ||
+      Math.abs(expectedH - escena.h) > 2
+  ) {
+      console.warn(
+          "UVTT metadata does not match embedded image dimensions",
+          { expectedW, expectedH, actualW: escena.w, actualH: escena.h }
+      );
+  }
+  /* End of debug code */
+  
   /* New code that scales based on actual image size */
   const actualPpgX = escena.w / res.map_size.x;
   const actualPpgY = escena.h / res.map_size.y;
@@ -1935,6 +1943,7 @@ async function importarUVTT(file){
     x: p.x * actualPpg,
     y: p.y * actualPpg
   });
+  console.log("Calculated ppg was used");
   /* end of new code */
   
   const muros = [];

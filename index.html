@@ -1901,9 +1901,7 @@ async function importarUVTT(file){
   escena.cal.hecha = true;          // el archivo ya trae la escala
 
   /* debug code to figure out map image scale */
-  console.log("PPG:", ppg);
   console.log("Scene image size:", escena.w, escena.h);
-  console.log("GridPx:", escena.cal.gridPx);
 
   const mapSize = d.resolution?.map_size;
   if (mapSize) {
@@ -1912,10 +1910,10 @@ async function importarUVTT(file){
       mapSize.y * ppg
     );
   }
-  /* end of debug code */
+  /* end of map image scale debug code */
 
   /* This code assumes that the image size matches the uvtt metadata, which can result in an image that is scaled incorrectly relative to the walls.
-  So, it is commented out and replaced.
+  So, it is commented out and replaced below.
   const aPx = p => ({x:p.x*ppg, y:p.y*ppg});
   */
 
@@ -1928,11 +1926,11 @@ async function importarUVTT(file){
       Math.abs(expectedH - escena.h) > 2
   ) {
       console.warn(
-          "UVTT metadata does not match embedded image dimensions",
+          "UVTT metadata does not match embedded image dimensions. Calculated scale will be used.",
           { expectedW, expectedH, actualW: escena.w, actualH: escena.h }
       );
   }
-  /* End of debug code */
+  /* End of debug warning code */
   
   /* New code that scales based on actual image size */
   const actualPpgX = escena.w / res.map_size.x;
@@ -1943,8 +1941,7 @@ async function importarUVTT(file){
     x: p.x * actualPpg,
     y: p.y * actualPpg
   });
-  console.log("Calculated ppg was used");
-  /* end of new code */
+  /* end of image scaler code */
   
   const muros = [];
   for(const grupo of (d.line_of_sight||[]))

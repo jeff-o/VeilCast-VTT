@@ -1908,6 +1908,19 @@ async function importarUVTT(file){
   escena.cal.gridPx = ppg;
   escena.cal.hecha = true;          // el archivo ya trae la escala
 
+  /* debug code to figure out map image scale */
+  console.log("PPG:", ppg);
+  console.log("Scene image size:", escena.w, escena.h);
+  console.log("GridPx:", escena.cal.gridPx);
+
+  const mapSize = d.resolution?.map_size;
+  if (mapSize) {
+    console.log("Expected image size:",
+      mapSize.x * ppg,
+      mapSize.y * ppg
+    );
+  }
+
   const aPx = p => ({x:p.x*ppg, y:p.y*ppg});
   const muros = [];
   for(const grupo of (d.line_of_sight||[]))

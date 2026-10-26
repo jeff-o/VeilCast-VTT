@@ -951,9 +951,21 @@
         <option value="0.85">Compact — 85%</option>
         <option value="1" selected>Normal — 100%</option>
         <option value="1.15">Large — 115%</option>
-      </select></label>
+      </select>
+    </label>
+    
     <p class="hint">Scales the panels, toolbars and dialogs. The map itself is never
       scaled, so the table stays true to size.</p>
+
+    <label class="field" style="display:block;margin-top:14px">
+      <input id="autoScaleMaps" type="checkbox" checked>
+      Automatically resize oversized maps
+    </label>
+    
+    <p class="hint">
+      Resize maps that exceed the recommended maximum size.
+    </p>
+
     <div class="acts" style="grid-template-columns:1fr;margin-top:16px">
       <button id="ajCerrar" class="primary">Close</button>
     </div>

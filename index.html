@@ -1153,7 +1153,9 @@ const S = {
   fogOpacity:0.5,
   fxPreset:EFFECTS[0], animSel:null, fxGeo:'circle', fxAlpha:1, fxBlend:'normal', wallW:1,
   sel:null, selMulti:[], selTokens:[], anclando:null, portapapeles:[], redo:[], anchor:null,
-  tema:'ember', ui:1,
+  tema:'ember',
+  ui:1,
+  autoScaleMaps:true,
   ini:{list:[], turnId:null, selId:null, mode:'dmg', entry:null, undo:[],
        show:true, corner:'tr', scale:1, hpMode:'pj'},
   pointers:new Map(), pinch:null, spaceDown:false, selDown:false, panning:null, drawing:null,
@@ -2749,7 +2751,7 @@ async function guardarEstado(){
   await dbPut('state', {id:'app', camp:CAMP.id, ini:S.ini, activa:sc()?sc().id:null,
     fx:{favoritos:CAT.favoritos, recientes:CAT.recientes, activas:CAT.activas},
     tokensMesa:S.tokensMesa, plegadas:S.plegadas||[], pasosNunca:!!S.pasosNunca,
-    snap:S.snap, tema:S.tema||'ember', ui:S.ui||1,
+    snap:S.snap, tema:S.tema||'ember', ui:S.ui||1, autoScaleMaps:S.autoScaleMaps,
     mesa:{dpi:T.dpi, diag:parseFloat($('diagIn').value)||27, cover:T.cover,
           bright:T.bright, contrast:T.contrast, hpMode:S.ini.hpMode,
           diagHecha:!!T.diagHecha, mesaAbierta:!!T.mesaAbierta}});
@@ -2848,12 +2850,45 @@ async function addSceneFile(file, type){
     const bmp = await cargarBitmap(file);
     const w = bmp.width || bmp.naturalWidth, h = bmp.height || bmp.naturalHeight;
 
+    /* old code section
     let blob = file, W=w, H=h;
     if(Math.max(w,h) > MAX_LADO){
       const cn = escalar(bmp,w,h,MAX_LADO);
       const b = await blobDeCanvas(cn,'image/webp',0.92);
       if(b){ blob=b; W=cn.width; H=cn.height; }
     }
+    */
+    /* New autoscale section */
+    let blob = file, W=w, H=h;
+
+    const oversized = Math.max(w,h) > MAX_LADO;
+
+    if(oversized && S.autoScaleMaps){
+      const cn = escalar(bmp,w,h,MAX_LADO);
+      const b = await blobDeCanvas(cn,'image/webp',0.92);
+
+      if(b){
+        blob=b;
+        W=cn.width;
+        H=cn.height;
+
+        toast(
+          `Oversized map resized from ${w}×${h} to ${W}×${H}.`
+        );
+      }
+    }
+
+    /* console code to make sure stuff is working */
+    console.log({
+      autoScaleMaps: S.autoScaleMaps,
+      oversized,
+      originalWidth: w,
+      originalHeight: h,
+      finalWidth: W,
+      finalHeight: H
+    });
+    /* end of console stuff */
+    
     const mini = escalar(bmp,w,h,MAX_MINI);
     const thumb = await blobDeCanvas(mini,'image/webp',0.8);
     if(bmp.close) bmp.close(); else if(bmp.__url) URL.revokeObjectURL(bmp.__url);
@@ -5097,6 +5132,7 @@ $('btnAjustes').onclick=()=>{
   }
   s.value=S.tema||'ember';
   $('uiSel').value=String(S.ui||1);
+  $('autoScaleMaps').checked = S.autoScaleMaps; /* checkbox to enable autoscaling */
   $('temaNota').textContent=(TEMAS.find(x=>x.id===s.value)||TEMAS[0]).nota||'';
   $('dlgAjustes').classList.remove('hide');
   s.focus();
@@ -5105,6 +5141,9 @@ $('btnAjustes').onclick=()=>{
    es para lo que sirve mirarlo. */
 $('temaSel').onchange=e=>aplicarTema(e.target.value, true);
 $('uiSel').onchange=e=>aplicarUI(parseFloat(e.target.value), true);
+$('autoScaleMaps').onchange=e=>{
+  S.autoScaleMaps = e.target.checked;
+};
 $('ajCerrar').onclick=()=>$('dlgAjustes').classList.add('hide');
 $('dlgAjustes').onclick=e=>{ if(e.target===$('dlgAjustes')) $('dlgAjustes').classList.add('hide'); };
 $('dlgAjustes').addEventListener('keydown',e=>{
@@ -5657,8 +5696,12 @@ async function arrancar(){
     if(previo && Array.isArray(previo.plegadas)) S.plegadas = previo.plegadas;
     /* El tema se pone aquí, antes del primer dibujado, junto al plegado y por el mismo
        motivo: aplicarlo más tarde enseñaría un fotograma con la paleta de fábrica. */
-    if(previo && previo.tema) aplicarTema(previo.tema);
-    if(previo && previo.ui) aplicarUI(previo.ui);
+    if(previo && previo.tema)
+      aplicarTema(previo.tema);
+    if(previo && previo.ui)
+      aplicarUI(previo.ui);
+    if(previo && previo.autoScaleMaps !== undefined)
+      S.autoScaleMaps = previo.autoScaleMaps;
   }
   prepararPlegado();
 

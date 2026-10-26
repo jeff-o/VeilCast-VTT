@@ -957,7 +957,7 @@
     <p class="hint">Scales the panels, toolbars and dialogs. The map itself is never
       scaled, so the table stays true to size.</p>
 
-    <label class="field" style="display:block;margin-top:14px">
+    <label class="field" style="display:flex;gap:8px;align-items:center;margin-top:14px">
       <input id="autoScaleMaps" type="checkbox" checked>
       Automatically resize oversized maps
     </label>
@@ -1911,9 +1911,11 @@ async function importarUVTT(file){
   if(!escena) return null;
 
   /* La escala viene dada: no hay que calibrar nada a mano. */
-  escena.cal.gridPx = ppg;
+  /*
+  escena.cal.gridPx = actualPpg;
   escena.cal.hecha = true;          // el archivo ya trae la escala
-
+  */
+  
   /* debug code to figure out map image scale */
   console.log("Scene image size:", escena.w, escena.h);
 
@@ -1951,6 +1953,10 @@ async function importarUVTT(file){
   const actualPpgY = escena.h / res.map_size.y;
   const actualPpg = (actualPpgX + actualPpgY) / 2;
 
+  /* Use actual image dimensions after any resizing */
+  escena.cal.gridPx = actualPpg;
+  escena.cal.hecha = true;
+
   const aPx = p => ({
     x: p.x * actualPpg,
     y: p.y * actualPpg
@@ -1978,9 +1984,12 @@ async function importarUVTT(file){
 
   /* Las luces se guardan tal cual: todavía no iluminan, pero quedan disponibles. */
   escena.lights = (d.lights||[]).map(l=>({
-    x:l.position.x*ppg, y:l.position.y*ppg,
-    rango:(l.range||0)*ppg, intensidad:l.intensity||1,
-    color:l.color||'ffffff', sombras:!!l.shadows
+    x:l.position.x*actualPpg,
+    y:l.position.y*actualPpg,
+    rango:(l.range||0)*actualPpg,
+    intensidad:l.intensity||1,
+    color:l.color||'ffffff',
+    sombras:!!l.shadows
   }));
   escena.ambiente = (d.environment||{}).ambient_light || null;
   if((d.environment||{}).baked_lighting !== undefined)
@@ -1991,7 +2000,7 @@ async function importarUVTT(file){
   syncSceneInputs(); renderLibrary(); recalcularVision(); draw();
 
   toast('"'+escena.name.replace(/\.[^.]+$/,'')+'": '+muros.length+' walls, '+
-        puertas+' doors and '+escena.lights.length+' lights. Square of '+ppg+' px.');
+        puertas+' doors and '+escena.lights.length+' lights. Square of 'actualPpg.toFixed(1)' px.');
   return escena;
 }
 

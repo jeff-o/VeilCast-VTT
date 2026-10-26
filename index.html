@@ -2000,7 +2000,7 @@ async function importarUVTT(file){
   syncSceneInputs(); renderLibrary(); recalcularVision(); draw();
 
   toast('"'+escena.name.replace(/\.[^.]+$/,'')+'": '+muros.length+' walls, '+
-        puertas+' doors and '+escena.lights.length+' lights. Square of 'actualPpg.toFixed(1)' px.');
+        puertas+' doors and '+escena.lights.length+' lights. Square of '+actualPpg.toFixed(1)+' px.');
   return escena;
 }
 

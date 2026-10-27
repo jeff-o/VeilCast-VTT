@@ -4205,8 +4205,15 @@ function empezarAnclaje(formas){
     toast('No player tokens on this map yet — place one with J first.'); return;
   }
   S.anclando=objs;
-  const nom = fx.length===1 ? (fx[0].name || shapeLabel(fx[0]) || 'this effect')
-                            : fx.length+' effects';
+
+  const nom = objs.length===1
+  ? (
+      objs[0].kind==='light'
+        ? 'this light'
+        : (objs[0].name || shapeLabel(objs[0]) || 'this effect')
+    )
+  : objs.length+' items';
+  
   $('anclaTxt').innerHTML='Select a player to anchor <b></b> to.';
   $('anclaTxt').querySelector('b').textContent=nom;
   $('anclaAviso').classList.add('on');
@@ -4232,7 +4239,7 @@ function terminarAnclaje(j){
   cursorDeHerramienta();
   tocarEscena(); syncCtxBar(); draw();
   toast(objs.length===1 ? 'Pinned to '+j.character+'. It follows them now.'
-                      : objs.length+' object pinned to '+j.character+'.');
+                      : objs.length+' objects pinned to '+j.character+'.');
 }
 $('anclaCancelar').onclick=()=>cancelarAnclaje();
 

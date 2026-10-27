@@ -4205,7 +4205,7 @@ function empezarAnclaje(formas){
     toast('No player tokens on this map yet — place one with J first.'); return;
   }
   S.anclando=objs;
-
+  console.log("Pin object:", objs[0]); /* debug code */
   const nom = objs.length===1
   ? (
       objs[0].kind==='light'

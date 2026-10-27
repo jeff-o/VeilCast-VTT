@@ -4216,13 +4216,12 @@ function empezarAnclaje(formas){
     console.log("Pin object:", objs[0]);
     console.log("Pin kind:", objs[0]?.kind);
 
-  if(objs[0]?.kind === 'light'){
-    nom = 'this light';
-  }
-  else{
-    nom = objs[0].name || shapeLabel(objs[0]) || 'this effect';
-  }
-
+    if(objs[0]?.kind === 'light' || objs[0]?.rango !== undefined){
+      nom = 'this light';
+    }
+    else{
+      nom = objs[0].name || shapeLabel(objs[0]) || 'this effect';
+    }
   }
   else{
     nom = objs.length+' items';
@@ -4466,6 +4465,7 @@ cv.addEventListener('pointerdown', e=>{
     const c = cal();
 
     s.lights.push({
+      kind:'light',
       x: wp.x,
       y: wp.y,
       rango: (rangeFt / c.unitVal) * c.gridPx,

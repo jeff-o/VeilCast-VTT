@@ -4339,6 +4339,35 @@ cv.addEventListener('pointerdown', e=>{
     if(modoNiebla()==='dinamica') recalcularVision();
     renderJugadores(); draw(); return;
   }
+  /* code for light tool */
+  if(S.tool==='light'){
+    if(!s.lights) s.lights=[];
+
+    const rangeFt = Math.max(
+      1,
+      parseFloat($('lightRange').value) || 30
+    );
+
+    const c = cal();
+
+    s.lights.push({
+      x: wp.x,
+      y: wp.y,
+      rango: (rangeFt / c.unitVal) * c.gridPx,
+      intensidad: 1,
+      color: 'ffffff',
+      sombras: false
+    });
+
+    S.verLuces = true;
+    $('verLuces').checked = true;
+
+    tocarEscena();
+    draw();
+
+    return;
+  }
+  /* end of code for light tool */
 
   if(S.tool==='oclusion'){
     const tol=10/S.view.k;
@@ -5417,7 +5446,7 @@ $('fileSes').onchange=e=>{
 
 /* ============ teclado ============ */
 const KEYS={v:'pan',s:'sel',m:'measure',x:'effect',f:'fog',p:'pointer',k:'calibrate',e:'frame',o:'anchor',
-            y:'oclusion',j:'token'};
+            y:'oclusion',j:'token',l:'light'};
 const FORMAS_TECLA={r:'line',c:'circle',n:'cone',q:'square',w:'wall',d:'free'};
 addEventListener('keydown',e=>{
   if(!$('modal').classList.contains('hide')) return;
@@ -5601,7 +5630,7 @@ const ATAJOS = [
     ['V','Pan the view'], ['S','Select and move'], ['M','Measure'],
     ['X','Effects'], ['F','Fog of war'], ['P','Table pointer'],
     ['E','Move table framing'], ['K','Calibrate square'], ['O','Anchor measure origin'],
-    ['Y','Occlusion walls'], ['J','Player tokens']
+    ['Y','Occlusion walls'], ['J','Player tokens'], ['L','Lights']
   ]],
   ['Walls and vision', [
     ['Drag token','Recalculates visibility'],

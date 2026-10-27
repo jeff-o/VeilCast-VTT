@@ -1853,11 +1853,21 @@ function lightEn(wp){
    token se reescriben sus coordenadas. Resolverlo al pintar obligaría a enseñar el
    desplazamiento al hit test, a los tiradores, a la copia de seguridad y a la niebla. */
 function arrastrarAnclados(j, dx, dy, salvo){
+  
   const s=sc(); if(!s || !s.shapes) return;
+  
   for(const sh of s.shapes){
     if(sh.pin!==j.id) continue;
     if(salvo && salvo.has(sh)) continue;
     translateShape(sh, dx, dy);
+  }
+  
+  if(s.lights){
+    for(const l of s.lights){
+      if(l.pin!==j.id) continue;
+      l.x += dx;
+      l.y += dy;
+    }
   }
 }
 const anclados = j => (sc()?.shapes || []).filter(sh=>sh.pin===j.id);
@@ -1865,6 +1875,7 @@ const anclados = j => (sc()?.shapes || []).filter(sh=>sh.pin===j.id);
    colocó sería peor que dejarlo huérfano. */
 function soltarAnclajes(pid){
   for(const sh of (sc()?.shapes || [])) if(sh.pin===pid) delete sh.pin;
+  for(const l of (sc()?.lights || [])) if(l.pin===pid) delete l.pin;
 }
 
 function drawTokens(c, view, dpr, modo, helpers){
@@ -4185,12 +4196,15 @@ function pegar(pos){
    había que borrarlo y volver a colocarlo con el modo puesto. Aquí la aplicación se
    queda esperando: se elige el efecto y luego el jugador. */
 function empezarAnclaje(formas){
-  const fx=(formas||[]).filter(x=>x.kind==='effect');
-  if(!fx.length){ toast('Pick an effect first.'); return; }
+  const objs=forms||[];
+  if(!objs.length){
+    toast('Select something to pin first.');
+    return;
+  }
   if(!jugadores().some(j=>tokenDe(j))){
     toast('No player tokens on this map yet — place one with J first.'); return;
   }
-  S.anclando=fx;
+  S.anclando=objs;
   const nom = fx.length===1 ? (fx[0].name || shapeLabel(fx[0]) || 'this effect')
                             : fx.length+' effects';
   $('anclaTxt').innerHTML='Select a player to anchor <b></b> to.';
@@ -4206,15 +4220,18 @@ function cancelarAnclaje(callado){
   if(!callado) toast('Pinning cancelled.');
 }
 function terminarAnclaje(j){
-  const fx=S.anclando; if(!fx) return;
+  const objs=S.anclando; if(!objs) return;
   push('shapes');
-  fx.forEach(x=>{ x.pin=j.id; });
+  objs.forEach(x=>{
+    x.pin=j.id;
+  });
+  
   S.anclando=null;
   $('anclaAviso').classList.remove('on');
   cursorDeHerramienta();
   tocarEscena(); syncCtxBar(); draw();
-  toast(fx.length===1 ? 'Pinned to '+j.character+'. It follows them now.'
-                      : fx.length+' effects pinned to '+j.character+'.');
+  toast(objs.length===1 ? 'Pinned to '+j.character+'. It follows them now.'
+                      : objs.length+' object pinned to '+j.character+'.');
 }
 $('anclaCancelar').onclick=()=>cancelarAnclaje();
 
@@ -4735,6 +4752,13 @@ cv.addEventListener('contextmenu', e=>{
       }
     });
 
+    items.push({
+      label:'Pin to player...',
+      hacer:()=>{
+        empezarAnclaje([luz]);
+      }
+    });
+    
     items.push({
       label:'Duplicate light',
       hacer:()=>{

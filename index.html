@@ -1870,7 +1870,12 @@ function arrastrarAnclados(j, dx, dy, salvo){
     }
   }
 }
-const anclados = j => (sc()?.shapes || []).filter(sh=>sh.pin===j.id);
+
+const anclados = j => [
+  ...(sc()?.shapes || []).filter(sh=>sh.pin===j.id),
+  ...(sc()?.lights || []).filter(l=>l.pin===j.id)
+];
+  
 /* Un token que se va de la escena suelta lo suyo donde esté: borrar arte que el director
    colocó sería peor que dejarlo huérfano. */
 function soltarAnclajes(pid){
@@ -2494,7 +2499,7 @@ function drawSelBox(c,view,dpr){
 /* El vínculo solo se enseña cuando una de las dos puntas está cogida: dibujarlo siempre
    llenaría el mapa de hilos en cuanto haya media docena de efectos anclados. */
 function drawAnclajes(c,view,dpr){
-  const s=sc(); if(!s || !s.shapes) return;
+  const s=sc(); if(!s) return;
   const pares=[];
   for(const sh of s.shapes){
     if(!sh.pin) continue;

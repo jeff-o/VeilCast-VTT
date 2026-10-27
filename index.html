@@ -4695,8 +4695,6 @@ cv.addEventListener('contextmenu', e=>{
     }
   S.sel=forma;
   }
-
-  
   syncCtxBar(); draw();
 
   const items=[];
@@ -4719,7 +4717,7 @@ cv.addEventListener('contextmenu', e=>{
       }
     });
   }
-  elseif(j){
+  else if(j){
     titulo=j.character;
     const atados=anclados(j);
     if(atados.length) items.push({label:'Release '+(atados.length===1?'the pinned effect'

@@ -5207,7 +5207,25 @@ $('btnBajar').onclick=()=>{
   const a=sc().shapes, i=a.indexOf(S.sel);
   if(i>0){ a.splice(i,1); a.unshift(S.sel); tocarEscena(); draw(); }
 };
-$('btnDup').onclick=()=>{ if(!S.sel) return; push('shapes');
+  
+$('btnDup').onclick=()=>{
+  if(S.lightSel){
+    const g = cal().gridPx || 50;
+    const c = {
+      ...S.lightSel,
+      x:S.lightSel.x + g,
+      y:S.lightSel.y + g
+    };
+    sc().lights.push(c);
+    S.lightSel = c;
+    tocarEscena();
+    syncCtxBar();
+    draw();
+    toast('Light duplicated.');
+    return;
+  }
+  
+  if(!S.sel) return; push('shapes');
   const g=cal().gridPx, c={...S.sel, a:{x:S.sel.a.x+g,y:S.sel.a.y+g}, b:{x:S.sel.b.x+g,y:S.sel.b.y+g}};
   sc().shapes.push(c); S.sel=c; renderFxList(); draw(); };
 

@@ -4701,7 +4701,25 @@ cv.addEventListener('contextmenu', e=>{
 
   const items=[];
   let titulo=null;
-  if(j){
+  if(luz){
+    titulo='Light';
+    items.push({
+     label:'Delete light',
+      peligro:true,
+      hacer:()=>{
+        const i=s.lights.indexOf(luz);
+        if(i>=0){
+          s.lights.splice(i,1);
+          if(S.lightSel===luz)
+            S.lightSel=null;
+          tocarEscena();
+          draw();
+          toast('Light deleted.');
+        }
+      }
+    });
+  }
+  elseif(j){
     titulo=j.character;
     const atados=anclados(j);
     if(atados.length) items.push({label:'Release '+(atados.length===1?'the pinned effect'

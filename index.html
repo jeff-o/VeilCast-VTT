@@ -4366,6 +4366,7 @@ cv.addEventListener('pointerdown', e=>{
         draw();
         return;
     }
+    S.lightSel = null;
     seleccionEnPunto(e, sp, wp);
     return;
   }
@@ -5562,10 +5563,33 @@ addEventListener('keydown',e=>{
     hideReadout(); syncCtxBar(); draw(); return; }
   if(k==='enter'&&S.lasso){ closeLasso(); return; }
   if(k==='enter'&&S.wallDraft){ cerrarPared(); return; }
+
   if(k==='delete'||k==='backspace'){
-    if(S.tool==='oclusion' && S.selParedes.length){ borrarSeleccionParedes(); e.preventDefault(); return; }
-    $('btnDel').click(); e.preventDefault(); return;
+    if(S.lightSel){
+      const s=sc();
+      if(s && s.lights){
+        const i=s.lights.indexOf(S.lightSel);
+        if(i>=0){
+          s.lights.splice(i,1);
+          S.lightSel=null;
+          tocarEscena();
+          draw();
+          toast('Light deleted.');
+        }
+      }
+      e.preventDefault();
+      return;
+    }
+    if(S.tool==='oclusion' && S.selParedes.length){
+      borrarSeleccionParedes();
+      e.preventDefault();
+      return;
+    }
+    $('btnDel').click();
+    e.preventDefault();
+    return;
   }
+ 
   if(k==='h'){ $('panel').classList.toggle('hidden'); return; }
   if(k==='b'){ setBlack(!T.black); return; }
   if(k==='t'){ nextTurn(); return; }

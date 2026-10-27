@@ -4359,6 +4359,11 @@ cv.addEventListener('pointerdown', e=>{
     if(l){
         console.log("Selected light", l);
         S.lightSel = l;
+
+        S.sel = null;
+        S.selMulti = [];
+        S.selTokens = [];
+      
         S.drawing = {
             kind:'light',
             light:l
@@ -4590,7 +4595,7 @@ cv.addEventListener('pointermove', e=>{
       else { const dx=np.x-S.sel.a.x, dy=np.y-S.sel.a.y; translateShape(S.sel,dx,dy); }
     }
     else if(d.kind==='token'){ moverToken(d.j, snapPoint(wp)); }
-    else if(d.kind==='light'){ d.light.x = wp.x; d.light.y = wp.y; }
+    else if(d.kind==='light'){ d.light.x = wp.x; d.light.y = wp.y; showReadout(sp, 'Light'); }
     else if(d.kind==='vertice'){ d.pared.pts[d.i]=snapPoint(wp); tocarEscena(); }
     else if(d.kind==='pointer'){ /* solo mueve el puntero */ }
     else if(S.draft.fija){
@@ -4665,16 +4670,33 @@ cv.addEventListener('contextmenu', e=>{
   const s=sc(); if(!s || s.type!=='map') return;
   const sp=evPos(e), wp=s2w(sp);
   const j=tokenEn(wp);
-  const forma = j ? null : hitTest(wp);
+  const luz = j ? null : lightEn(wp);
+  const forma = (j || luz) ? null : hitTest(wp);
   /* Pulsar sobre algo que ya estaba cogido no deshace la selección: así el menú actúa
      sobre el grupo entero, que es lo que se espera al pulsar dentro de él. */
   if(j){
-    if(!S.selTokens.includes(j)){ S.selTokens=[j]; S.sel=null; S.selMulti=[]; }
+    if(!S.selTokens.includes(j)){
+      S.selTokens=[j];
+      S.sel=null;
+      S.selMulti=[];
+      S.lightSel=null;
+    }
     S.tokenSel=j;
+  } else if(luz){
+    S.lightSel=luz;
+    S.sel=null;
+    S.selMulti=[];
+    S.selTokens=[];
   } else if(forma){
-    if(!S.selMulti.includes(forma)){ S.selMulti=[forma]; S.selTokens=[]; }
-    S.sel=forma;
+    if(!S.selMulti.includes(forma)){
+      S.selMulti=[forma];
+      S.selTokens=[];
+      S.lightSel=null;
+    }
+  S.sel=forma;
   }
+
+  
   syncCtxBar(); draw();
 
   const items=[];

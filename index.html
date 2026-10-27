@@ -2056,6 +2056,21 @@ function drawLuces(c, view, dpr){
     c.setLineDash([6/view.k,5/view.k]); c.stroke(); c.setLineDash([]);
     c.beginPath(); c.arc(l.x, l.y, (cal().gridPx||50)*0.12, 0, Math.PI*2);
     c.fillStyle = col+'CC'; c.fill();
+
+    if(l === S.lightSel){
+      c.beginPath();
+      c.arc(
+        l.x,
+        l.y,
+        Math.max((cal().gridPx||50)*0.20, 12/view.k),
+        0,
+        Math.PI*2
+      );
+
+      c.strokeStyle = '#ffffff';
+      c.lineWidth = 2/view.k;
+      c.stroke();
+    }
   }
   c.restore();
   c.setTransform(dpr,0,0,dpr,0,0);

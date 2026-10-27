@@ -4206,6 +4206,31 @@ function empezarAnclaje(formas){
   }
   S.anclando=objs;
   console.log("Pin object:", objs[0]); /* debug code */
+
+  /* new nom code */
+
+  let nom = 'this item';
+
+  if(objs.length===1){
+
+    console.log("Pin object:", objs[0]);
+    console.log("Pin kind:", objs[0]?.kind);
+
+  if(objs[0]?.kind === 'light'){
+    nom = 'this light';
+  }
+  else{
+    nom = objs[0].name || shapeLabel(objs[0]) || 'this effect';
+  }
+
+  }
+  else{
+    nom = objs.length+' items';
+  }
+
+  /* end of new nom code */
+
+  /* old nom code
   const nom = objs.length===1
   ? (
       objs[0].kind==='light'
@@ -4213,6 +4238,7 @@ function empezarAnclaje(formas){
         : (objs[0].name || shapeLabel(objs[0]) || 'this effect')
     )
   : objs.length+' items';
+  */
   
   $('anclaTxt').innerHTML='Select a player to anchor <b></b> to.';
   $('anclaTxt').querySelector('b').textContent=nom;

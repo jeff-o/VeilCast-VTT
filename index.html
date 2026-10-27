@@ -2507,14 +2507,31 @@ function drawAnclajes(c,view,dpr){
     const t=tokenDe(j); if(!t) continue;
     if(S.selTokens.includes(j) || sh===S.sel || S.selMulti.includes(sh)) pares.push([t,sh]);
   }
+  for(const l of (s.lights || [])){
+    if(!l.pin) continue;
+    const j=jugadores().find(x=>x.id===l.pin);
+    if(!j) continue;
+    const t=tokenDe(j);
+    if(!t) continue;
+    if(S.selTokens.includes(j) || l===S.lightSel)
+      pares.push([t,l]);
+  }
   if(!pares.length) return;
+  
   c.save();
   c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
   c.strokeStyle=PAL.point; c.lineWidth=1.4/view.k;
   c.setLineDash([3/view.k,4/view.k]);
-  for(const [t,sh] of pares){
-    c.beginPath(); c.moveTo(t.x,t.y); c.lineTo(sh.a.x,sh.a.y); c.stroke();
+  
+  for(const [t,obj] of pares){
+    const ax = obj.a ? obj.a.x : obj.x;
+    const ay = obj.a ? obj.a.y : obj.y;
+    c.beginPath();
+    c.moveTo(t.x,t.y);
+    c.lineTo(ax, ay);
+    c.stroke();
   }
+  
   c.setLineDash([]);
   c.restore();
   c.setTransform(dpr,0,0,dpr,0,0);

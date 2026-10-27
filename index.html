@@ -717,6 +717,17 @@
   <button data-tool="fog" class="fx" aria-label="Fog of war (F)" title="Fog of war (F)"><svg viewBox="0 0 24 24"><path d="M4 15h16M6 11h12M8 19h8"/><circle cx="12" cy="7" r="3"/></svg><span class="k">F</span></button>
   <button data-tool="oclusion" aria-label="Occlusion walls (Y)" title="Occlusion walls (Y)"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg><span class="k">Y</span></button>
   <button data-tool="token" aria-label="Player tokens (J)" title="Player tokens (J)"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg><span class="k">J</span></button>
+  /* Lights button */
+  <button data-tool="light" aria-label="Lights (L)" title="Lights (L)">
+    <svg viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="2"/>
+      <path d="M12 3v4M12 17v4M3 12h4M17 12h4"/>
+      <path d="M6 6l2.5 2.5M15.5 15.5L18 18"/>
+      <path d="M18 6l-2.5 2.5M8.5 15.5L6 18"/>
+    </svg>
+  <span class="k">L</span>
+  </button>
+  /* End of Lights button */
   <button data-tool="pointer" aria-label="Table pointer (P)" title="Table pointer (P)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span class="k">P</span></button>
   <!-- Calibrar, encuadre y ancla son modos como los de arriba: se apoderan del puntero
        igual y hasta ahora vivían escondidos en pestañas distintas del panel. Los botones
@@ -856,10 +867,24 @@
     </span>
     <span class="sepv"></span>
     <span class="cl" role="group" aria-label="Show on your screen">
-      <label style="display:flex;align-items:center;gap:5px">Vision<input id="verVision" type="checkbox"></label>
-      <label style="display:flex;align-items:center;gap:5px">Lights<input id="verLuces" type="checkbox"></label>
+      <label style="display:flex;align-items:center;gap:5px">Display Vision<input id="verVision" type="checkbox"></label>
+      <label style="display:flex;align-items:center;gap:5px">DIsplay Lights<input id="verLuces" type="checkbox"></label>
     </span>
   </div>
+  
+  /* light effects */
+  <div class="grp" id="grp-light">
+    <span class="cl" role="group" aria-label="Light">
+      <span style="display:flex;align-items:center;gap:5px">
+        Range
+        <input id="lightRange" type="number"
+               min="5" step="5" value="30"
+               style="width:58px">
+      </span>
+    </span>
+  </div>
+  /* end light effects */
+  
   <div class="grp" id="grp-sel">
     <span id="selName" style="color:var(--text)">Nothing selected</span>
     <span class="sepv"></span>
@@ -4708,6 +4733,12 @@ const PISTAS = {
     ['Click','place'], ['Drag','move'], ['Vision','what exploring reveals'],
     ['Select tool','takes tokens too']
   ]},
+  light: {titulo:'Lights', filas:[
+    ['Click','place a light'],
+    ['Show Lights','toggle visibility'],
+    ['Range','currently fixed'],
+    ['Del','remove selected light']
+  ]},
   pointer: {titulo:'Table pointer', filas:[
     ['Click','ping the table'], ['Fades','after a second'], ['Images too','only tool that does']
   ]},
@@ -4782,6 +4813,7 @@ function syncCtxBar(){
     calibrate: t==='calibrate',
     oclusion: t==='oclusion',
     token: t==='token',
+    light: t==='light',
     clear: MEASURE_TOOLS.includes(t)
   };
   for(const k in show) $('grp-'+k).classList.toggle('on',show[k]);

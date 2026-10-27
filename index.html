@@ -4701,8 +4701,54 @@ cv.addEventListener('contextmenu', e=>{
   let titulo=null;
   if(luz){
     titulo='Light';
+
     items.push({
-     label:'Delete light',
+      label:'Set range...',
+      hacer:async ()=>{
+        const c = cal();
+        const actualFt = Math.round(
+          (luz.rango / c.gridPx) * c.unitVal
+        );
+
+        const txt = await pedirTexto(
+          'Light range',
+          'Range ('+c.unitName+')',
+          String(actualFt)
+        );
+
+        if(txt===null) return;
+        const nuevo = Math.max(
+          1,
+          parseFloat(txt) || actualFt
+        );
+
+        luz.rango = (nuevo / c.unitVal) * c.gridPx;
+        tocarEscena();
+        draw();
+        toast('Light range updated.');
+      }
+    });
+
+    items.push({
+      label:'Duplicate light',
+      hacer:()=>{
+        const paso = cal().gridPx || 50;
+        const copia = {
+          ...luz,
+          x: luz.x + paso,
+          y: luz.y + paso
+        };
+
+        s.lights.push(copia);
+        S.lightSel = copia;
+        tocarEscena();
+        draw();
+        toast('Light duplicated.');
+      }
+    });
+
+    items.push({
+      label:'Delete light',
       peligro:true,
       hacer:()=>{
         const i=s.lights.indexOf(luz);

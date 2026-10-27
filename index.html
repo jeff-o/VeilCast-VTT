@@ -4363,11 +4363,17 @@ cv.addEventListener('pointerdown', e=>{
         S.sel = null;
         S.selMulti = [];
         S.selTokens = [];
+
+        const c = cal();
+        $('lightRange').value = Math.round(
+          (l.rango / c.gridPx) * c.unitVal
+        );
       
         S.drawing = {
             kind:'light',
             light:l
         };
+        
         draw();
         return;
     }
@@ -5258,6 +5264,18 @@ $('tokenVision').oninput=e=>{
   if(!S.tokenSel) return;
   S.tokenSel.vision=Math.max(0,parseFloat(e.target.value)||0);
   tocarCampana(); recalcularVision(); draw();
+};
+$('lightRange').oninput=e=>{
+  if(!S.lightSel) return;
+  const c = cal();
+  const rangeFt = Math.max(
+    1,
+    parseFloat(e.target.value) || 1
+  );
+  S.lightSel.rango =
+    (rangeFt / c.unitVal) * c.gridPx;
+  tocarEscena();
+  draw();
 };
 $('verVision').onchange=e=>{ S.verVision=e.target.checked; draw(); };
 $('verLuces').onchange=e=>{ S.verLuces=e.target.checked; draw(); };

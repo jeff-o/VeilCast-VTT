@@ -4220,6 +4220,7 @@ function cancelarAnclaje(callado){
   if(!callado) toast('Pinning cancelled.');
 }
 function terminarAnclaje(j){
+  console.log("terminarAnclaje is running", j);
   const objs=S.anclando; if(!objs) return;
   push('shapes');
   objs.forEach(x=>{

@@ -1177,7 +1177,7 @@ const S = {
   snap:{measure:'none', effect:'center', oclusion:'corner', token:'center'},
   medForma:'line', medDist:0,
   wallDraft:null, selParedes:[], wallModo:'segmento', wallNuevo:false, soloParedes:false,
-  tokenSel:null, tokensMesa:'ocultos', verVision:false, verLuces:false,
+  tokenSel:null, lightSel:null, tokensMesa:'ocultos', verVision:false, verLuces:false,
   fogMode:'hide', fogShape:'brush', brush:75,
   /* La niebla arranca a medias en tu pantalla: opaca del todo, un mapa recién cargado
      parecía no estar cargando nada. En la mesa se sigue viendo entera. */
@@ -1829,6 +1829,26 @@ function tokenCerca(wp, radio){
   }
   return mejor;
 }
+  
+/* light effect handler */
+function lightEn(wp){
+  const s = sc();
+  if(!s || !s.lights) return null;
+
+  const tol = Math.max(
+    (cal().gridPx || 50) * 0.12,
+    10 / S.view.k
+  );
+
+  for(const l of s.lights){
+    if(dist(wp, l) <= tol)
+      return l;
+  }
+
+  return null;
+}
+/* end of light effect handler */
+  
 /* Los efectos anclados van escritos en píxeles de mapa como todo lo demás: al mover el
    token se reescriben sus coordenadas. Resolverlo al pintar obligaría a enseñar el
    desplazamiento al hit test, a los tiradores, a la copia de seguridad y a la niebla. */
@@ -4317,7 +4337,19 @@ cv.addEventListener('pointerdown', e=>{
 
   /* La herramienta de selección entera está en seleccionEnPunto(); aquí solo queda la de
      tokens, que arrastra el que haya debajo y si no lo hay coloca uno. */
-  if(S.tool==='sel'){ seleccionEnPunto(e, sp, wp); return; }
+
+  if(S.tool==='sel'){
+    const l = lightEn(wp);
+    if(l){
+      console.log("Selected light", l);
+      S.lightSel = l;
+      draw();
+      return;
+    }
+    seleccionEnPunto(e, sp, wp);
+    return;
+  }
+
   if(S.tool==='token'){
     const j=tokenEn(wp);
     if(j){

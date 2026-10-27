@@ -4368,12 +4368,12 @@ cv.addEventListener('pointerdown', e=>{
         $('lightRange').value = Math.round(
           (l.rango / c.gridPx) * c.unitVal
         );
-      
+    
         S.drawing = {
             kind:'light',
             light:l
         };
-        
+        syncCtxBar();
         draw();
         return;
     }
@@ -4981,7 +4981,7 @@ function syncCtxBar(){
     calibrate: t==='calibrate',
     oclusion: t==='oclusion',
     token: t==='token',
-    light: t==='light',
+    light: t==='light' || !!S.lightSel,
     clear: MEASURE_TOOLS.includes(t)
   };
   for(const k in show) $('grp-'+k).classList.toggle('on',show[k]);

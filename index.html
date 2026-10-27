@@ -5029,11 +5029,14 @@ function syncCtxBar(){
   $('btnPin').style.display = fxSel.length ? '' : 'none';
   $('btnPin').textContent = yaAnclados ? 'Unpin'
     : (S.selTokens.length===1 ? 'Pin to '+S.selTokens[0].character : 'Pin to player…');
-  const nSel = S.selMulti.length + S.selTokens.length;
-  $('selName').textContent = nSel>1
-    ? nSel+' items selected'
-    : (S.selTokens.length===1 ? S.selTokens[0].character
-      : (S.sel ? (S.sel.name || shapeLabel(S.sel) || 'Stroke') : 'Nothing selected'));
+  const nSel = S.selMulti.length + S.selTokens.length + (S.lightSel ? 1 : 0);
+  $('selName').textContent =
+    S.lightSel ? 'Light'
+    : nSel>1
+      ? nSel+' items selected'
+      : (S.selTokens.length===1 ? S.selTokens[0].character
+        : (S.sel ? (S.sel.name || shapeLabel(S.sel) || 'Stroke')
+          : 'Nothing selected'));
   if(S.sel && S.sel.kind==='effect'){
     $('fxBlend').value = S.sel.blend || 'normal';
     $('fxAlpha').value = Math.round((S.sel.alpha!=null?S.sel.alpha:1)*100);
@@ -5163,6 +5166,20 @@ $('btnClearAll').onclick=async ()=>{
 };
 
 $('btnDel').onclick=()=>{
+    if(S.lightSel){
+      const s=sc();
+      const i=s.lights.indexOf(S.lightSel);
+      if(i>=0){
+        s.lights.splice(i,1);
+        S.lightSel=null;
+        $('lightRange').value = 30;
+        tocarEscena();
+        syncCtxBar();
+        draw();
+        toast('Light deleted.');
+      }
+      return;
+    }
   const grupo = S.selMulti.length ? [...S.selMulti] : (S.sel?[S.sel]:[]);
   const toks = [...S.selTokens];
   if(!grupo.length && !toks.length) return;

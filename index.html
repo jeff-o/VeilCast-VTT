@@ -2063,6 +2063,9 @@ async function importarUVTT(file){
 function drawLuces(c, view, dpr){
   const s=sc();
   if(!s || !s.lights || !s.lights.length || !S.verLuces) return;
+
+  const segs = segmentosMapa(); /* debug code */
+  
   c.save();
   c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
   for(const l of s.lights){

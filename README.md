@@ -7,7 +7,14 @@ screen laid flat in the table — with real miniatures on top of it. It runs ent
 your browser, needs no account, no subscription and no cloud, and every map you load
 stays on your own machine.
 
-👉 **[Launch VeilCast](https://cr-lolo.github.io/VeilCast-VTT/)** — no install required
+👉 **[Launch VeilCast](https://jeff-o.github.io/VeilCast-VTT/)** — no install required
+
+**Changes compared to the original:**
+
+- Added a feature that allows maps larger than 8192 to be scaled down (controlled by a checkbox in Settings)
+- Added a Light tool that allows light elements to be added to a map
+- Lights may be attached to a player token (ie they are carrying a lamp or torch)
+- Lights are blocked by walls
 
 ---
 

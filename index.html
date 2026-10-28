@@ -2064,27 +2064,48 @@ function drawLuces(c, view, dpr){
   const s=sc();
   if(!s || !s.lights || !s.lights.length || !S.verLuces) return;
 
-  const segs = segmentosMapa(); /* debug code */
-  
+  const segs = segmentosMapa();
+
   c.save();
-  c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
+  c.setTransform(
+    dpr*view.k,0,0,dpr*view.k,
+    dpr*view.x,dpr*view.y
+  );
+
   for(const l of s.lights){
 
-    /* some debug code to see how polygons are drawn */
+    const col = '#'+String(l.color).slice(-6);
     const poly = poligonoVisible(
       {x:l.x, y:l.y},
       l.rango,
       segs
     );
-    console.log("Light polygon:", poly);
-    /* end of debug */
-    
-    const col = '#'+String(l.color).slice(-6);
-    c.beginPath(); c.arc(l.x, l.y, Math.max(l.rango,4), 0, Math.PI*2);
-    c.strokeStyle = col+'44'; c.lineWidth=1.2/view.k;
-    c.setLineDash([6/view.k,5/view.k]); c.stroke(); c.setLineDash([]);
-    c.beginPath(); c.arc(l.x, l.y, (cal().gridPx||50)*0.12, 0, Math.PI*2);
-    c.fillStyle = col+'CC'; c.fill();
+
+    if(poly.length >= 3){
+      c.beginPath();
+      c.moveTo(poly[0].x, poly[0].y);
+      for(let i=1;i<poly.length;i++){
+        c.lineTo(poly[i].x, poly[i].y);
+      }
+      c.closePath();
+      c.fillStyle = col+'10';
+      c.fill();
+      c.strokeStyle = col+'44';
+      c.lineWidth = 1.2/view.k;
+      c.setLineDash([6/view.k,5/view.k]);
+      c.stroke();
+      c.setLineDash([]);
+    }
+    c.beginPath();
+    c.arc(
+      l.x,
+      l.y,
+      (cal().gridPx||50)*0.12,
+      0,
+      Math.PI*2
+    );
+    c.fillStyle = col+'CC';
+    c.fill();
 
     if(l === S.lightSel){
       c.beginPath();
@@ -2095,7 +2116,6 @@ function drawLuces(c, view, dpr){
         0,
         Math.PI*2
       );
-
       c.strokeStyle = '#ffffff';
       c.lineWidth = 2/view.k;
       c.stroke();

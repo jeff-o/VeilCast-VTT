@@ -2066,6 +2066,16 @@ function drawLuces(c, view, dpr){
   c.save();
   c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
   for(const l of s.lights){
+
+    /* some debug code to see how polygons are drawn */
+    const poly = poligonoVisible(
+      {x:l.x, y:l.y},
+      l.rango,
+      segs
+    );
+    console.log("Light polygon:", poly);
+    /* end of debug */
+    
     const col = '#'+String(l.color).slice(-6);
     c.beginPath(); c.arc(l.x, l.y, Math.max(l.rango,4), 0, Math.PI*2);
     c.strokeStyle = col+'44'; c.lineWidth=1.2/view.k;

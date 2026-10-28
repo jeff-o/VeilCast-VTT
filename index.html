@@ -4426,21 +4426,23 @@ cv.addEventListener('pointerdown', e=>{
      tokens, que arrastra el que haya debajo y si no lo hay coloca uno. */
 
   if(S.tool==='sel'){
+    const j = tokenEn(wp);
+    if(j){
+        S.lightSel = null;
+        seleccionEnPunto(e, sp, wp);
+        return;
+    }
     const l = lightEn(wp);
-
     if(l){
         console.log("Selected light", l);
         S.lightSel = l;
-
         S.sel = null;
         S.selMulti = [];
         S.selTokens = [];
-
         const c = cal();
         $('lightRange').value = Math.round(
           (l.rango / c.gridPx) * c.unitVal
         );
-    
         S.drawing = {
             kind:'light',
             light:l
@@ -4449,10 +4451,11 @@ cv.addEventListener('pointerdown', e=>{
         draw();
         return;
     }
+
     S.lightSel = null;
     seleccionEnPunto(e, sp, wp);
     return;
-  }
+}
 
   if(S.tool==='token'){
     const j=tokenEn(wp);
@@ -5101,12 +5104,19 @@ function syncCtxBar(){
   } else $('wallCuenta').textContent='';
   pintarTodosSegmentos();
   if(t==='token') renderSelectorTokens();
+  
   /* El botón aparece en cuanto hay un efecto cogido. Con un token cogido ancla directo;
      sin él abre el modo de elegir jugador, que es la vía larga pero siempre disponible.
      Y si ya está anclado, suelta. */
   const fxSel = S.selMulti.filter(x=>x.kind==='effect');
-  const yaAnclados = fxSel.length>0 && fxSel.every(x=>x.pin);
-  $('btnPin').style.display = fxSel.length ? '' : 'none';
+  const pinObjs = S.lightSel
+    ? [S.lightSel]
+    : fxSel;
+  const yaAnclados =
+    pinObjs.length>0 &&
+    pinObjs.every(x=>x.pin);
+  $('btnPin').style.display =
+    pinObjs.length ? '' : 'none';
   $('btnPin').textContent = yaAnclados ? 'Unpin'
     : (S.selTokens.length===1 ? 'Pin to '+S.selTokens[0].character : 'Pin to player…');
   const nSel = S.selMulti.length + S.selTokens.length + (S.lightSel ? 1 : 0);
@@ -5169,21 +5179,25 @@ $('showGrid').onchange=e=>{ S.showGrid=e.target.checked; draw(); };
 $('btnCalibrate').onclick=()=>setTool('calibrate');
 $('btnPin').onclick=()=>{
   const fx=S.selMulti.filter(x=>x.kind==='effect');
-  if(!fx.length) return;
-  if(fx.every(x=>x.pin)){
+  const objs = S.lightSel
+    ? [S.lightSel]
+    : fx;
+  if(!objs.length) return;
+  
+  if(objs.every(x=>x.pin)){
     push('shapes');
-    fx.forEach(x=>delete x.pin);
+    objs.forEach(x=>delete x.pin);
     tocarEscena(); syncCtxBar(); draw();
-    toast(fx.length===1 ? 'Effect released.' : fx.length+' effects released.');
+    toast(objs.length===1 ? 'Effect released.' : objs.length+' effects released.');
     return;
   }
   const j=S.selTokens[0];
-  if(!j){ empezarAnclaje(fx); return; }   // sin token cogido, se elige uno
+  if(!j){ empezarAnclaje(objs); return; }   // sin token cogido, se elige uno
   push('shapes');
-  fx.forEach(x=>{ x.pin=j.id; });
+  objs.forEach(x=>{ x.pin=j.id; });
   tocarEscena(); syncCtxBar(); draw();
-  toast(fx.length===1 ? 'Effect pinned to '+j.character+'.'
-                      : fx.length+' effects pinned to '+j.character+'.');
+  toast(objs.length===1 ? 'Effect pinned to '+j.character+'.'
+                      : objs.length+' effects pinned to '+j.character+'.');
 };
 const RANURA_POS = {effect:'effect', oclusion:'oclusion', token:'token'};
 const ranuraPos = t => RANURA_POS[t] || 'measure';

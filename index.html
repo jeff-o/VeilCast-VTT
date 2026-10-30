@@ -2226,6 +2226,47 @@ function drawLuces(c, view, dpr){
   c.setTransform(dpr,0,0,dpr,0,0);
 }
 
+function drawBrightLightColor(c, view, dpr){
+  const s = sc();
+  if(!s || s.lightLevel !== 'dark')
+    return;
+
+  const segs = segmentosMapa();
+
+  c.save();
+
+  c.setTransform(
+    dpr*view.k,0,0,dpr*view.k,
+    dpr*view.x,dpr*view.y
+  );
+
+  for(const l of (s.lights || [])){
+
+    const poly = poligonoVisible(
+      {x:l.x, y:l.y},
+      l.rango,
+      segs
+    );
+
+    if(poly.length < 3)
+      continue;
+
+    c.save();
+    c.beginPath();
+    c.moveTo(poly[0].x, poly[0].y);
+
+    for(let i=1;i<poly.length;i++){
+      c.lineTo(poly[i].x, poly[i].y);
+    }
+
+    c.closePath();
+    c.clip();
+    c.drawImage(s.img,0,0);
+    c.restore();
+  }
+  c.restore();
+}
+
 /* darkness rendering */
 function drawDarkness(c, view, dpr, W, H){
   const s = sc();
@@ -2471,6 +2512,8 @@ function renderScene(c, view, W, H, dpr, o){
   c.filter = 'none';
   c.globalAlpha=1;
   c.restore();
+
+  drawBrightLightColor(c,view,dpr);
 
   if(s.lightLevel === 'dark'){
     c.save();
@@ -3006,7 +3049,6 @@ function escalar(src, w, h, maxLado){
   return cn;
 }
 
-/*const MAX_LADO = 4096;   // resolución máxima que se guarda de un mapa */
 const MAX_LADO = 8192;   // maximum resolution doubled since huge maps are seeing scaling issues
 const MAX_MINI = 320;    // lado de la miniatura de biblioteca
 const MAX_NIEBLA = 2048; // resolución a la que se guarda la máscara de niebla

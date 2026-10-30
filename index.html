@@ -1263,6 +1263,17 @@ const isMap = () => { const s=sc(); return !!s && s.type==='map'; };
 const cal = () => { const s=sc(); return s && s.cal ? s.cal : {gridPx:50,unitVal:5,unitName:'ft',rule:'cheb'}; };
 const shapes = () => { const s=sc(); return s && s.shapes ? s.shapes : []; };
 
+/* update the light radius value */
+function updateLightDimInfo(){
+  const rangeFt = Math.max(
+    1,
+    parseFloat($('lightRange').value) || 1
+  );
+
+  $('lightDimInfo').textContent =
+    'Dim ' + (rangeFt * 2);
+}
+
 /* ============ geometría y medidas ============ */
 const w2s = (p,v=S.view) => ({x:p.x*v.k+v.x, y:p.y*v.k+v.y});
 const s2w = (p,v=S.view) => ({x:(p.x-v.x)/v.k, y:(p.y-v.y)/v.k});
@@ -4545,15 +4556,12 @@ cv.addEventListener('pointerdown', e=>{
         S.selMulti = [];
         S.selTokens = [];
         const c = cal();
+      
         $('lightRange').value = Math.round(
           (l.rango / c.gridPx) * c.unitVal
         );
-        const rangeFt = Math.round(
-          (l.rango / c.gridPx) * c.unitVal
-        );
-        $('lightRange').value = rangeFt;
-        $('lightDimInfo').textContent =
-          'Dim ' + (rangeFt * 2);
+      
+        updateLightDimInfo();
       
         S.drawing = {
             kind:'light',
@@ -5562,7 +5570,7 @@ $('lightRange').oninput=e=>{
     1,
     parseFloat(e.target.value) || 1
   );
-  $('lightDimInfo').textContent = 'Dim ' + (rangeFt * 2);
+  updateLightDimInfo();
   S.lightSel.rango =
     (rangeFt / c.unitVal) * c.gridPx;
   tocarEscena();

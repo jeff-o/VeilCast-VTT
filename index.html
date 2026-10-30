@@ -916,10 +916,14 @@
   <div class="grp" id="grp-light">
     <span class="cl" role="group" aria-label="Light">
       <span style="display:flex;align-items:center;gap:5px">
-        Range
+        Bright Radius
         <input id="lightRange" type="number"
                min="5" step="5" value="30"
                style="width:58px">
+        <span id="lightDimInfo"
+          style="font-family:var(--mono);font-size:11px">
+          Dim 60
+        </span>
       </span>
       <span class="sepv"></span>
       <span style="display:flex;align-items:center;gap:5px">
@@ -4544,6 +4548,13 @@ cv.addEventListener('pointerdown', e=>{
         $('lightRange').value = Math.round(
           (l.rango / c.gridPx) * c.unitVal
         );
+        const rangeFt = Math.round(
+          (l.rango / c.gridPx) * c.unitVal
+        );
+        $('lightRange').value = rangeFt;
+        $('lightDimInfo').textContent =
+          'Dim ' + (rangeFt * 2);
+      
         S.drawing = {
             kind:'light',
             light:l
@@ -5551,6 +5562,7 @@ $('lightRange').oninput=e=>{
     1,
     parseFloat(e.target.value) || 1
   );
+  $('lightDimInfo').textContent = 'Dim ' + (rangeFt * 2);
   S.lightSel.rango =
     (rangeFt / c.unitVal) * c.gridPx;
   tocarEscena();

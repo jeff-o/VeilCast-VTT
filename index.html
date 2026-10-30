@@ -2215,6 +2215,51 @@ function drawLuces(c, view, dpr){
   c.setTransform(dpr,0,0,dpr,0,0);
 }
 
+/* darkness rendering */
+function drawDarkness(c, view, dpr, W, H){
+  const s = sc();
+  if(!s || s.lightLevel !== 'dark')
+    return;
+
+  const segs = segmentosMapa();
+  c.save();
+
+  /* Dark overlay */
+  c.fillStyle = 'rgba(0,0,0,0.75)';
+  c.fillRect(0,0,W,H);
+
+  /* Lights carve holes in the darkness */
+  c.globalCompositeOperation = 'destination-out';
+
+  c.setTransform(
+    dpr*view.k,0,0,dpr*view.k,
+    dpr*view.x,dpr*view.y
+  );
+
+  for(const l of (s.lights || [])){
+
+    const poly = poligonoVisible(
+      {x:l.x, y:l.y},
+      l.rango * 2,
+      segs
+    );
+
+    if(poly.length < 3)
+      continue;
+
+    c.beginPath();
+    c.moveTo(poly[0].x, poly[0].y);
+
+    for(let i=1;i<poly.length;i++){
+      c.lineTo(poly[i].x, poly[i].y);
+    }
+
+    c.closePath();
+    c.fill();
+  }
+  c.restore();
+}
+  
 /* ============ visibilidad: qué ve cada token ============ */
 /* Se lanzan rayos desde el token hacia los extremos de cada pared (y unos cuantos
    repartidos en círculo para el contorno libre). El punto donde cada rayo choca
@@ -2411,12 +2456,14 @@ function renderScene(c, view, W, H, dpr, o){
   c.globalAlpha=1;
   c.restore();
 
+  /* to be replaced
   if(s.lightLevel === 'dark'){
     c.save();
     c.fillStyle = 'rgba(0,0,0,0.75)';
     c.fillRect(0,0,W,H);
     c.restore();
   }
+  */
 
   if(s.type==='map'){
     if(o.grid) drawGrid(c,view,dpr,W,H,false);
@@ -2447,6 +2494,7 @@ function renderScene(c, view, W, H, dpr, o){
     if(o.walls) drawParedes(c,view,dpr,o);
     if(o.tokens) drawTokens(c,view,dpr,o.tokens,!o.hideHelpers);
     if(o.brushCursor) drawBrushCursor(c,view,dpr);
+    drawDarkness(c,view,dpr,W,H);
   }
   if(o.pointer) drawPointer(c,view,dpr);
   drawPings(c,view,dpr);

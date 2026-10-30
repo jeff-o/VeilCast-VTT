@@ -853,6 +853,12 @@
       <select id="tokenJug" title="Player placed on click"></select>
       <span style="display:flex;align-items:center;gap:5px">Vision
         <input id="tokenVision" type="number" min="0" step="5" value="30" style="width:58px"></span>
+      <span style="display:flex;align-items:center;gap:5px">Dark
+        <input id="tokenDarkvision" type="number" min="0" step="5" value="0" style="width:58px"></span>
+      <span style="display:flex;align-items:center;gap:5px">Blind
+        <input id="tokenBlindsight" type="number" min="0" step="5" value="0" style="width:58px"></span>
+      <span style="display:flex;align-items:center;gap:5px">True
+        <input id="tokenTruesight" type="number" min="0" step="5" value="0" style="width:58px"></span>
       <button id="tokenQuitar" class="ghost">Remove from map</button>
     </span>
     <span class="sepv"></span>
@@ -3412,6 +3418,12 @@ const campActiva = () => CAMP.lista.find(c=>c.id===CAMP.id) || null;
 const jugadores  = () => { const c=campActiva(); return c ? (c.players||(c.players=[])) : []; };
 const jugadorPorId = id => jugadores().find(j=>j.id===id) || null;
 
+function normalizarVision(j){
+  if(j.darkvision == null) j.darkvision = 0;
+  if(j.blindsight == null) j.blindsight = 0;
+  if(j.truesight == null) j.truesight = 0;
+}
+
 async function guardarCampana(){
   const c=campActiva(); if(!c || !DB.ok) return;
   c.updated=Date.now();
@@ -3474,9 +3486,13 @@ function renderSelectorTokens(){
   });
   if(!S.tokenSel) S.tokenSel=lista[0];
   $('tokenVision').value = S.tokenSel.vision!=null ? S.tokenSel.vision : 30;
+  $('tokenDarkvision').value = S.tokenSel.darkvision ?? 0;
+  $('tokenBlindsight').value = S.tokenSel.blindsight ?? 0;
+  $('tokenTruesight').value = S.tokenSel.truesight ?? 0;
 }
 
 function renderJugadores(){
+  jugadores().forEach(normalizarVision);
   const box=$('juglist'); if(!box) return;
   box.innerHTML='';
   const lista=jugadores();
@@ -3616,7 +3632,7 @@ function guardarJugador(){
       m.name=datos.character; m.hp=datos.hp; m.hpMax=datos.hpMax; m.temp=datos.temp; } });
   } else {
     jugadores().push({id:'j'+(jugUid++)+Date.now().toString(36), cond:[], saves:[0,0,0,0,0,0],
-                      vision:30, ...datos});
+                      vision:30, darkvision:0, blindsight:0, truesight:0, ...datos});
   }
   cerrarJugador(); tocarCampana(); renderJugadores(); renderIniList(); draw();
 }
@@ -5419,7 +5435,16 @@ $('wallVaciar').onclick=async ()=>{
 };
 $('tokenJug').onchange=e=>{
   S.tokenSel = jugadores().find(j=>j.id===e.target.value) || null;
-  if(S.tokenSel) $('tokenVision').value = S.tokenSel.vision!=null ? S.tokenSel.vision : 30;
+  if(S.tokenSel){
+    $('tokenVision').value =
+      S.tokenSel.vision!=null ? S.tokenSel.vision : 30;
+    $('tokenDarkvision').value =
+      S.tokenSel.darkvision ?? 0;
+    $('tokenBlindsight').value =
+      S.tokenSel.blindsight ?? 0;
+    $('tokenTruesight').value =
+      S.tokenSel.truesight ?? 0;
+  }
   draw();
 };
 $('tokenVision').oninput=e=>{
@@ -5427,6 +5452,28 @@ $('tokenVision').oninput=e=>{
   S.tokenSel.vision=Math.max(0,parseFloat(e.target.value)||0);
   tocarCampana(); recalcularVision(); draw();
 };
+
+$('tokenDarkvision').oninput=e=>{
+  if(!S.tokenSel) return;
+  S.tokenSel.darkvision =
+    Math.max(0, parseFloat(e.target.value) || 0);
+  tocarCampana();
+};
+
+$('tokenBlindsight').oninput=e=>{
+  if(!S.tokenSel) return;
+  S.tokenSel.blindsight =
+    Math.max(0, parseFloat(e.target.value) || 0);
+  tocarCampana();
+};
+
+$('tokenTruesight').oninput=e=>{
+  if(!S.tokenSel) return;
+  S.tokenSel.truesight =
+    Math.max(0, parseFloat(e.target.value) || 0);
+  tocarCampana();
+};
+  
 $('lightRange').oninput=e=>{
   if(!S.lightSel) return;
   const c = cal();

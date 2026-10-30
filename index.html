@@ -922,11 +922,14 @@
                style="width:58px">
       </span>
       <span class="sepv"></span>
-      <select id="ambientLight" title="Ambient lighting">
-        <option value="bright">☀ Bright</option>
-        <option value="dim">◐ Dim</option>
-        <option value="dark">🌙 Dark</option>
-      </select>
+      <span style="display:flex;align-items:center;gap:5px">
+        Light Level
+        <select id="ambientLight" title="Ambient lighting">
+          <option value="bright">☀ Bright</option>
+          <option value="dim">◐ Dim</option>
+          <option value="dark">🌙 Dark</option>
+        </select>
+      </span>
     </span>
   </div>
   <div class="grp" id="grp-sel">
@@ -2363,7 +2366,9 @@ function renderScene(c, view, W, H, dpr, o){
   c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
   c.imageSmoothingQuality='high';
   if(o.atenuar) c.globalAlpha=0.3;
+  if(s.lightLevel === 'dim') c.filter = 'grayscale(100%)';
   c.drawImage(s.img,0,0);
+  c.filter = 'none';
   c.globalAlpha=1;
   c.restore();
 

@@ -921,6 +921,12 @@
                min="5" step="5" value="30"
                style="width:58px">
       </span>
+      <span class="sepv"></span>
+      <select id="ambientLight" title="Ambient lighting">
+        <option value="bright">☀ Bright</option>
+        <option value="dim">◐ Dim</option>
+        <option value="dark">🌙 Dark</option>
+      </select>
     </span>
   </div>
   <div class="grp" id="grp-sel">
@@ -2904,7 +2910,7 @@ async function guardarEscenaMeta(s){
     id:s.id, camp:s.camp, orden:s.orden, type:s.type, name:s.name, w:s.w, h:s.h,
     thumb:s.thumb, cal:s.cal, center:s.center, shapes:s.shapes,
     walls:s.walls||[], tokens:s.tokens||{}, fogModo:s.fogModo||'manual',
-    lights:s.lights||[], ambiente:s.ambiente||null, updated:Date.now()
+    lights:s.lights||[], ambiente:s.ambiente||null, lightLevel:s.lightLevel||'bright', updated:Date.now()
   });
 }
 /* La niebla vive a la resolución a la que se guarda, no a la del mapa. Antes se ampliaba
@@ -3033,14 +3039,6 @@ async function addSceneFile(file, type){
     const bmp = await cargarBitmap(file);
     const w = bmp.width || bmp.naturalWidth, h = bmp.height || bmp.naturalHeight;
 
-    /* old code section
-    let blob = file, W=w, H=h;
-    if(Math.max(w,h) > MAX_LADO){
-      const cn = escalar(bmp,w,h,MAX_LADO);
-      const b = await blobDeCanvas(cn,'image/webp',0.92);
-      if(b){ blob=b; W=cn.width; H=cn.height; }
-    }
-    */
     /* New autoscale section */
     let blob = file, W=w, H=h;
 
@@ -3079,7 +3077,7 @@ async function addSceneFile(file, type){
     const id = 'e'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
     const s = {
       id, camp:CAMP.id, orden:LIB.scenes.length, type, name:file.name, w:W, h:H,
-      thumb, cal:{gridPx:50,unitVal:5,unitName:'ft',rule:'cheb'},
+      thumb, lightLevel:'bright', cal:{gridPx:50,unitVal:5,unitName:'ft',rule:'cheb'},
       shapes:[], walls:[], tokens:{}, fogModo:'manual', center:{x:W/2,y:H/2},
       img:null, ready:false
     };
@@ -3238,6 +3236,12 @@ function syncSceneInputs(){
   $('unitName').value=c.unitName; $('ruleSel').value=c.rule;
   $('gridOx').value=c.ox||0; $('gridOy').value=c.oy||0;
   $('fogModo').value = modoNiebla();
+
+  const s = sc();
+  if(s && $('ambientLight')){
+    $('ambientLight').value =
+      s.lightLevel || 'bright';
+  }
 }
 
 /* ============ historial unificado ============ */
@@ -5520,6 +5524,14 @@ $('btnVisionToggle').onclick=()=>{
     open ? 'VISION ▶' : 'VISION ▼';
 };
   
+$('ambientLight').onchange=e=>{
+  const s = sc();
+  if(!s) return;
+  s.lightLevel = e.target.value;
+  tocarEscena();
+  draw();
+};
+  
 $('lightRange').oninput=e=>{
   if(!S.lightSel) return;
   const c = cal();
@@ -6237,7 +6249,7 @@ async function arrancar(){
     LIB.scenes = recs.map(r=>({...r, img:null, ready:false, thumbUrl:null,
                                shapes:r.shapes||[], walls:r.walls||[], tokens:r.tokens||{},
                                lights:r.lights||[], ambiente:r.ambiente||null,
-                               fogModo:r.fogModo||'manual',
+                               lightLevel:r.lightLevel||'bright', fogModo:r.fogModo||'manual',
                                cal:r.cal||{gridPx:50,unitVal:5,unitName:'ft',rule:'cheb'}}));
     /* El registro de la campaña solo guarda {ini, activa}; todo lo demás —favoritos del
        catálogo, colocación, tema, la pulgada del monitor— vive en el de la aplicación.

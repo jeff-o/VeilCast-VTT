@@ -2228,8 +2228,11 @@ function drawLuces(c, view, dpr){
 
 function drawBrightLightColor(c, view, dpr){
   const s = sc();
-  if(!s || s.lightLevel !== 'dark')
-    return;
+  if(
+    !s ||
+    !['dark','dim'].includes(s.lightLevel)
+  )
+   return;
 
   const segs = segmentosMapa();
 

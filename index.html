@@ -2372,6 +2372,13 @@ function renderScene(c, view, W, H, dpr, o){
   c.globalAlpha=1;
   c.restore();
 
+  if(s.lightLevel === 'dark'){
+    c.save();
+    c.fillStyle = 'rgba(0,0,0,0.75)';
+    c.fillRect(0,0,W,H);
+    c.restore();
+  }
+
   if(s.type==='map'){
     if(o.grid) drawGrid(c,view,dpr,W,H,false);
     if(s.fogCv){

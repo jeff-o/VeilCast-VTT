@@ -5473,6 +5473,16 @@ $('tokenTruesight').oninput=e=>{
     Math.max(0, parseFloat(e.target.value) || 0);
   tocarCampana();
 };
+
+$('btnVisionToggle').onclick=()=>{
+  const open =
+    $('visionFields').style.display !== 'none';
+  
+  $('visionFields').style.display =
+    open ? 'none' : 'flex';
+  $('btnVisionToggle').textContent =
+    open ? 'VISION ▶' : 'VISION ▼';
+};
   
 $('lightRange').oninput=e=>{
   if(!S.lightSel) return;

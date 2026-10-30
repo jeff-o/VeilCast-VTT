@@ -851,14 +851,52 @@
   <div class="grp" id="grp-token">
     <span class="cl" role="group" aria-label="Player">
       <select id="tokenJug" title="Player placed on click"></select>
-      <span style="display:flex;align-items:center;gap:5px">Vision
-        <input id="tokenVision" type="number" min="0" step="5" value="30" style="width:58px"></span>
-      <span style="display:flex;align-items:center;gap:5px">Dark
-        <input id="tokenDarkvision" type="number" min="0" step="5" value="0" style="width:58px"></span>
-      <span style="display:flex;align-items:center;gap:5px">Blind
-        <input id="tokenBlindsight" type="number" min="0" step="5" value="0" style="width:58px"></span>
-      <span style="display:flex;align-items:center;gap:5px">True
-        <input id="tokenTruesight" type="number" min="0" step="5" value="0" style="width:58px"></span>
+      <button id="btnVisionToggle" class="ghost">
+        VISION ▶
+      </button>
+
+      <div id="visionFields"
+        style="display:none;align-items:center;gap:5px">
+        <span style="display:flex;align-items:center;gap:5px">
+          Normal Sight
+          <input id="tokenVision"
+            type="number"
+            min="0"
+            step="5"
+            value="30"
+            style="width:58px">
+        </span>
+
+        <span style="display:flex;align-items:center;gap:5px">
+          Darkvision
+          <input id="tokenDarkvision"
+            type="number"
+            min="0"
+            step="5"
+            value="0"
+            style="width:58px">
+        </span>
+
+        <span style="display:flex;align-items:center;gap:5px">
+          Blindvision
+          <input id="tokenBlindsight"
+            type="number"
+            min="0"
+            step="5"
+            value="0"
+            style="width:58px">
+        </span>
+
+        <span style="display:flex;align-items:center;gap:5px">
+          TrueSight
+          <input id="tokenTruesight"
+            type="number"
+            min="0"
+            step="5"
+            value="0"
+            style="width:58px">
+        </span>
+      </div>
       <button id="tokenQuitar" class="ghost">Remove from map</button>
     </span>
     <span class="sepv"></span>

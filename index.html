@@ -878,7 +878,7 @@
         </span>
 
         <span style="display:flex;align-items:center;gap:5px">
-          Blindvision
+          Blindsight
           <input id="tokenBlindsight"
             type="number"
             min="0"
@@ -888,7 +888,7 @@
         </span>
 
         <span style="display:flex;align-items:center;gap:5px">
-          TrueSight
+          Truesight
           <input id="tokenTruesight"
             type="number"
             min="0"
@@ -2010,10 +2010,6 @@ async function importarUVTT(file){
   if(!escena) return null;
 
   /* La escala viene dada: no hay que calibrar nada a mano. */
-  /*
-  escena.cal.gridPx = actualPpg;
-  escena.cal.hecha = true;          // el archivo ya trae la escala
-  */
   
   /* debug code to figure out map image scale */
   console.log("Scene image size:", escena.w, escena.h);
@@ -2026,11 +2022,6 @@ async function importarUVTT(file){
     );
   }
   /* end of map image scale debug code */
-
-  /* This code assumes that the image size matches the uvtt metadata, which can result in an image that is scaled incorrectly relative to the walls.
-  So, it is commented out and replaced below.
-  const aPx = p => ({x:p.x*ppg, y:p.y*ppg});
-  */
 
   /* Debug code that warns if the metadata does not match the actual image size */
   const expectedW = res.map_size.x * ppg;
@@ -2091,6 +2082,13 @@ async function importarUVTT(file){
     sombras:!!l.shadows
   }));
   escena.ambiente = (d.environment||{}).ambient_light || null;
+  /* debug code to see how it handles importing ambient light */
+  console.log(
+    "UVTT ambient light:",
+    (d.environment||{}).ambient_light
+  );
+  /**/
+  
   if((d.environment||{}).baked_lighting !== undefined)
     escena.luzHorneada = !!d.environment.baked_lighting;
 

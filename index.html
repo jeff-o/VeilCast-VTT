@@ -2153,6 +2153,17 @@ function drawLuces(c, view, dpr){
       segs
     );
 
+    if(dimPoly.length >= 3){
+      c.beginPath();
+      c.moveTo(dimPoly[0].x, dimPoly[0].y);
+      for(let i=1;i<dimPoly.length;i++){
+        c.lineTo(dimPoly[i].x, dimPoly[i].y);
+      }
+      c.closePath();
+      c.fillStyle = col+'06';
+      c.fill();
+    }
+
     if(poly.length >= 3){
       c.beginPath();
       c.moveTo(poly[0].x, poly[0].y);
@@ -2160,7 +2171,7 @@ function drawLuces(c, view, dpr){
         c.lineTo(poly[i].x, poly[i].y);
       }
       c.closePath();
-      c.fillStyle = col+'10';
+      c.fillStyle = col+'18';
       c.fill();
       if(l === S.lightSel){
         c.strokeStyle = col+'44';

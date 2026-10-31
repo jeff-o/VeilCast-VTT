@@ -2564,9 +2564,6 @@ function renderScene(c, view, W, H, dpr, o){
   ){
     c.filter = 'grayscale(100%)';
   }
-
-  console.log("lightLevel =", s.lightLevel);
-  console.log("filter =", c.filter);
   
   c.drawImage(s.img,0,0);
   c.filter = 'none';

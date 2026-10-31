@@ -2280,11 +2280,14 @@ function drawDarkness(c, view, dpr, W, H){
   c.save();
 
   /* Dark overlay */
-  c.fillStyle = 'rgba(0,0,0,0.75)';
+  /*c.fillStyle = 'rgba(0,0,0,0.75)';*/
+  c.fillStyle = 'rgba(255,0,0,0.3)';
   c.fillRect(0,0,W,H);
 
   /* Lights carve holes in the darkness */
-  c.globalCompositeOperation = 'destination-out';
+  console.log(c.globalCompositeOperation);
+  /*c.globalCompositeOperation = 'destination-out';*/
+  c.globalCompositeOperation = 'source-over';
 
   c.setTransform(
     dpr*view.k,0,0,dpr*view.k,
@@ -2312,6 +2315,7 @@ function drawDarkness(c, view, dpr, W, H){
     c.closePath();
     c.fill();
   }
+  console.log("after darkness", c.globalCompositeOperation);
   c.restore();
 }
   

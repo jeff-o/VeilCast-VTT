@@ -15,6 +15,9 @@ stays on your own machine.
 - Added a Light tool that allows light elements to be added to a map
 - Lights may be attached to a player token (ie they are carrying a lamp or torch)
 - Lights are blocked by walls
+- Added ambient light feature. there are now three light levels available: bright, dim, and dark.
+- lights now display a bright light radius and a dim light radius
+- players with darkvision/blindsight/truesight vision radius are surrounded by an area of colour and greyscale to indicate the radius of effect.
 
 ---
 

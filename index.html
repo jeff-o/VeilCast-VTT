@@ -2321,6 +2321,170 @@ function drawBrightLightColor(c, view, dpr){
   c.restore();
 }
 
+function visionPoly(j, radioPx){
+  const t = tokenDe(j);
+  if(!t || radioPx <= 0) return [];
+
+  return poligonoVisible(
+    t,
+    radioPx,
+    segmentosMapa()
+  );
+}  
+
+function drawDarkvisionAreas(c, view, dpr){
+  const s = sc();
+  if(!s || s.lightLevel === 'bright')
+    return;
+
+  const calInfo = cal();
+
+  c.save();
+
+  c.setTransform(
+    dpr*view.k,0,0,dpr*view.k,
+    dpr*view.x,dpr*view.y
+  );
+
+  for(const j of (S.tokens || [])){
+
+    const darkFt = parseFloat(j.darkvision) || 0;
+    if(darkFt <= 0)
+      continue;
+
+    const radioPx =
+      (darkFt / calInfo.unitVal) *
+      calInfo.gridPx;
+
+    const poly = visionPoly(j, radioPx);
+
+    if(poly.length < 3)
+      continue;
+
+    c.save();
+
+    c.beginPath();
+    c.moveTo(poly[0].x, poly[0].y);
+
+    for(let i=1;i<poly.length;i++){
+      c.lineTo(poly[i].x, poly[i].y);
+    }
+
+    c.closePath();
+    c.clip();
+
+    if(s.lightLevel === 'dim'){
+      c.drawImage(s.img,0,0);
+    }else{
+      c.filter = 'grayscale(100%)';
+      c.drawImage(s.img,0,0);
+      c.filter = 'none';
+    }
+
+    c.restore();
+  }
+
+  c.restore();
+}
+
+function drawBlindsightAreas(c, view, dpr){
+  const s = sc();
+  if(!s || s.lightLevel === 'bright')
+    return;
+
+  const calInfo = cal();
+
+  c.save();
+
+  c.setTransform(
+    dpr*view.k,0,0,dpr*view.k,
+    dpr*view.x,dpr*view.y
+  );
+
+  for(const j of (S.tokens || [])){
+
+    const ft = parseFloat(j.blindsight) || 0;
+    if(ft <= 0)
+      continue;
+
+    const radioPx =
+      (ft / calInfo.unitVal) *
+      calInfo.gridPx;
+
+    const poly = visionPoly(j, radioPx);
+
+    if(poly.length < 3)
+      continue;
+
+    c.save();
+
+    c.beginPath();
+    c.moveTo(poly[0].x, poly[0].y);
+
+    for(let i=1;i<poly.length;i++){
+      c.lineTo(poly[i].x, poly[i].y);
+    }
+
+    c.closePath();
+    c.clip();
+
+    c.drawImage(s.img,0,0);
+
+    c.restore();
+  }
+
+  c.restore();
+}
+
+function drawTruesightAreas(c, view, dpr){
+  const s = sc();
+  if(!s || s.lightLevel === 'bright')
+    return;
+
+  const calInfo = cal();
+
+  c.save();
+
+  c.setTransform(
+    dpr*view.k,0,0,dpr*view.k,
+    dpr*view.x,dpr*view.y
+  );
+
+  for(const j of (S.tokens || [])){
+
+    const ft = parseFloat(j.truesight) || 0;
+    if(ft <= 0)
+      continue;
+
+    const radioPx =
+      (ft / calInfo.unitVal) *
+      calInfo.gridPx;
+
+    const poly = visionPoly(j, radioPx);
+
+    if(poly.length < 3)
+      continue;
+
+    c.save();
+
+    c.beginPath();
+    c.moveTo(poly[0].x, poly[0].y);
+
+    for(let i=1;i<poly.length;i++){
+      c.lineTo(poly[i].x, poly[i].y);
+    }
+
+    c.closePath();
+    c.clip();
+
+    c.drawImage(s.img,0,0);
+
+    c.restore();
+  }
+
+  c.restore();
+}
+
 /* darkness rendering */
 function drawDarkness(c, view, dpr, W, H){
   const s = sc();

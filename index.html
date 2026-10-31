@@ -2346,7 +2346,7 @@ function drawDarkvisionAreas(c, view, dpr){
     dpr*view.x,dpr*view.y
   );
 
-  for(const j of (S.tokens || [])){
+  for(const j of jugadores()){
 
     const darkFt = parseFloat(j.darkvision) || 0;
     if(darkFt <= 0)
@@ -2401,7 +2401,7 @@ function drawBlindsightAreas(c, view, dpr){
     dpr*view.x,dpr*view.y
   );
 
-  for(const j of (S.tokens || [])){
+  for(const j of jugadores()){
 
     const ft = parseFloat(j.blindsight) || 0;
     if(ft <= 0)
@@ -2450,7 +2450,7 @@ function drawTruesightAreas(c, view, dpr){
     dpr*view.x,dpr*view.y
   );
 
-  for(const j of (S.tokens || [])){
+  for(const j of jugadores()){
 
     const ft = parseFloat(j.truesight) || 0;
     if(ft <= 0)
@@ -2737,6 +2737,9 @@ function renderScene(c, view, W, H, dpr, o){
   drawDarkness(c, view, dpr, W, H);
   drawDimLightArea(c, view, dpr);
   drawBrightLightColor(c,view,dpr);
+  drawDarkvisionAreas(c, view, dpr);
+  drawBlindsightAreas(c, view, dpr);
+  drawTruesightAreas(c, view, dpr);
   
   if(s.type==='map'){
     if(o.grid) drawGrid(c,view,dpr,W,H,false);

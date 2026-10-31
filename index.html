@@ -5868,7 +5868,9 @@ $('tokenJug').onchange=e=>{
 $('tokenVision').oninput=e=>{
   if(!S.tokenSel) return;
   S.tokenSel.vision=Math.max(0,parseFloat(e.target.value)||0);
-  tocarCampana(); recalcularVision(); draw();
+  tocarCampana(); 
+  recalcularVision(); 
+  draw();
 };
 
 $('tokenDarkvision').oninput=e=>{
@@ -5876,6 +5878,7 @@ $('tokenDarkvision').oninput=e=>{
   S.tokenSel.darkvision =
     Math.max(0, parseFloat(e.target.value) || 0);
   tocarCampana();
+  draw();
 };
 
 $('tokenBlindsight').oninput=e=>{
@@ -5883,6 +5886,7 @@ $('tokenBlindsight').oninput=e=>{
   S.tokenSel.blindsight =
     Math.max(0, parseFloat(e.target.value) || 0);
   tocarCampana();
+  draw();
 };
 
 $('tokenTruesight').oninput=e=>{
@@ -5890,6 +5894,7 @@ $('tokenTruesight').oninput=e=>{
   S.tokenSel.truesight =
     Math.max(0, parseFloat(e.target.value) || 0);
   tocarCampana();
+  draw();
 };
 
 $('btnVisionToggle').onclick=()=>{

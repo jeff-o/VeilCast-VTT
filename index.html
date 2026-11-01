@@ -2735,11 +2735,11 @@ function renderScene(c, view, W, H, dpr, o){
   c.restore();
 
   drawDarkness(c, view, dpr, W, H);
-  drawDimLightArea(c, view, dpr);
-  drawBrightLightColor(c,view,dpr);
   drawDarkvisionAreas(c, view, dpr);
+  drawDimLightArea(c, view, dpr);
   drawBlindsightAreas(c, view, dpr);
   drawTruesightAreas(c, view, dpr);
+  drawBrightLightColor(c,view,dpr);
   
   if(s.type==='map'){
     if(o.grid) drawGrid(c,view,dpr,W,H,false);

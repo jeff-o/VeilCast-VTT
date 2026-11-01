@@ -852,28 +852,29 @@
   <div class="grp" id="grp-token" style="position:relative">
     <span class="cl" role="group" aria-label="Player">
       <select id="tokenJug" title="Player placed on click"></select>
-      <button id="btnVisionToggle" class="ghost">
-        VISION ▶
-      </button>
+      <div style="position:relative;display:inline-block">
+        <button id="btnVisionToggle" class="ghost">
+          VISION ▶
+        </button>
 
-      <div id="visionFields"
-        style="
-          display:none;
-          position:absolute;
-          bottom:100%;
-          left:50%;
-          transform:translateX(-50%);
-          margin-bottom:8px;
-          flex-direction:column;
-          align-items:flex-start;
-          gap:6px;
-          padding:10px;
-          border-radius:12px;
-          background:var(--panel);
-          border:1px solid var(--line);
-          box-shadow:0 8px 24px rgba(0,0,0,.4);
-          z-index:1000;
-        ">
+        <div id="visionFields"
+          style="
+            display:none;
+            position:absolute;
+            bottom:calc(100% + 4px);
+            left:50%;
+            transform:translateX(-50%);
+            margin-bottom:0px;
+            flex-direction:column;
+            align-items:flex-start;
+            gap:6px;
+            padding:10px;
+            border-radius:12px;
+            background:var(--panel);
+            border:1px solid var(--line);
+            box-shadow:0 8px 24px rgba(0,0,0,.4);
+            z-index:1000;
+          ">
         <span style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:180px;">
           Normal Sight
           <input id="tokenVision"
@@ -913,6 +914,7 @@
             value="0"
             style="width:58px">
         </span>
+      </div>
       </div>
       <button id="tokenQuitar" class="ghost">Remove from map</button>
     </span>

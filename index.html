@@ -391,7 +391,7 @@
   /* La barra vive en el hueco que queda entre el panel y la columna de la derecha, no
      centrada en la ventana: así no se mete debajo de la chuleta ni de la escala. */
   #ctxbar{position:absolute;left:var(--panel-w);right:74px;bottom:34px;
-    margin:0 auto;width:fit-content;max-width:100%;z-index:11;
+    margin:0 auto;width:fit-content;max-width:100%;z-index:12;
     display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;
     background:rgba(var(--panel-rgb),.94);backdrop-filter:blur(10px);
     box-shadow:0 6px 20px rgba(var(--shadow-rgb),.35);
@@ -5923,7 +5923,7 @@ $('btnVisionToggle').onclick=()=>{
   $('visionFields').style.display =
     open ? 'none' : 'flex';
   $('btnVisionToggle').textContent =
-    open ? 'VISION ▶' : 'VISION ▼';
+    open ? 'VISION ▶' : 'VISION ▲';
 };
   
 $('ambientLight').onchange=e=>{

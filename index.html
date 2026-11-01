@@ -861,12 +861,9 @@
           display:none;
           position:absolute;
           bottom:100%;
-          left:140px;
+          left:50%;
+          transform:translateX(-50%);
           margin-bottom:8px;
-
-          background:red;
-          border:3px solid yellow;
-        
           flex-direction:column;
           align-items:flex-start;
           gap:6px;
@@ -877,7 +874,7 @@
           box-shadow:0 8px 24px rgba(0,0,0,.4);
           z-index:1000;
         ">
-        <span style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:220px;">
+        <span style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:180px;">
           Normal Sight
           <input id="tokenVision"
             type="number"
@@ -887,7 +884,7 @@
             style="width:58px">
         </span>
 
-        <span style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:220px;">
+        <span style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:180px;">
           Darkvision
           <input id="tokenDarkvision"
             type="number"
@@ -897,7 +894,7 @@
             style="width:58px">
         </span>
 
-        <span style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:220px;">
+        <span style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:180px;">
           Blindsight
           <input id="tokenBlindsight"
             type="number"
@@ -907,7 +904,7 @@
             style="width:58px">
         </span>
 
-        <span style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:220px;">
+        <span style="display:flex;justify-content:space-between;align-items:center;gap:10px;width:180px;">
           Truesight
           <input id="tokenTruesight"
             type="number"
@@ -2519,7 +2516,6 @@ function drawDarkness(c, view, dpr, W, H){
   c.fillRect(0,0,W,H);
 
   /* Lights carve holes in the darkness */
-  console.log(c.globalCompositeOperation);
   c.globalCompositeOperation = 'destination-out';
 
   c.setTransform(
@@ -2548,7 +2544,6 @@ function drawDarkness(c, view, dpr, W, H){
     c.closePath();
     c.fill();
   }
-  console.log("after darkness", c.globalCompositeOperation);
   c.restore();
 }
   
@@ -5409,7 +5404,15 @@ function setTool(t){
     if(t!=='token' && t!=='sel') S.tokenSel=null;
     hideReadout();
   }
-  cerrarMapMenu(); cancelarAnclaje(true);
+  cerrarMapMenu(); 
+  cancelarAnclaje(true);
+
+  /* Close token vision popup when changing tools */
+  if(t !== 'token'){
+    $('visionFields').style.display = 'none';
+    $('btnVisionToggle').textContent = 'VISION ▶';
+  }
+
   S.tool=t;
   /* Fuera del if de arriba a propósito: volver a pulsar la herramienta que ya está
      puesta trae la chuleta de vuelta aunque se hubiera cerrado. Cambiar de herramienta

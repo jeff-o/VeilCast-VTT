@@ -664,7 +664,7 @@
       <label class="field"><span>Pixels per inch</span><input id="dpiIn" type="number" min="20" step="0.25" value="96"></label>
       <label class="field"><span>Detected resolution</span><span id="tableRes" style="font-family:var(--mono);font-size:11px;color:var(--text)">—</span></label>
       <label class="field"><span>Coverage</span><span id="tableInfo" style="font-family:var(--mono);font-size:11px;color:var(--text)">not open</span></label>
-      <button id="btnTestGrid" class="wide" style="margin-top:4px">Check grid on table</button>
+      <button id="btnTestGrid" class="wide" style="margin-top:4px">Display grid on Table</button>
     </section>
     <section>
       <p class="eyebrow fold">Map scale</p>
@@ -2809,7 +2809,7 @@ function drawGrid(c,view,dpr,W,H,bright){
     for(let x=ox%g;x<=s.w;x+=g){ c.moveTo(x,0); c.lineTo(x,s.h); }
     for(let y=oy%g;y<=s.h;y+=g){ c.moveTo(0,y); c.lineTo(s.w,y); }
   }
-  c.strokeStyle = bright ? 'rgba('+PAL.measureRgb+',.35)' : 'rgba('+PAL.textRgb+',.20)';
+  c.strokeStyle = bright ? 'rgba('+PAL.measureRgb+',.45)' : 'rgba('+PAL.textRgb+',.20)';
   c.lineWidth = (bright?0.7:1)/view.k;
   c.stroke();
   c.setTransform(dpr,0,0,dpr,0,0);

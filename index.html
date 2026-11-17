@@ -2809,8 +2809,8 @@ function drawGrid(c,view,dpr,W,H,bright){
     for(let x=ox%g;x<=s.w;x+=g){ c.moveTo(x,0); c.lineTo(x,s.h); }
     for(let y=oy%g;y<=s.h;y+=g){ c.moveTo(0,y); c.lineTo(s.w,y); }
   }
-  c.strokeStyle = bright ? 'rgba('+PAL.measureRgb+',.85)' : 'rgba('+PAL.textRgb+',.20)';
-  c.lineWidth = (bright?1.4:1)/view.k;
+  c.strokeStyle = bright ? 'rgba('+PAL.measureRgb+',.35)' : 'rgba('+PAL.textRgb+',.20)';
+  c.lineWidth = (bright?0.7:1)/view.k;
   c.stroke();
   c.setTransform(dpr,0,0,dpr,0,0);
 }

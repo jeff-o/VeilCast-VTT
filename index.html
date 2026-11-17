@@ -2793,7 +2793,7 @@ function renderScene(c, view, W, H, dpr, o){
   if(o.initiative) drawInitiative(c,W,H,dpr);
 }
 
-
+/* The DM Grid */
 function drawGrid(c,view,dpr,W,H,bright){
   const g=cal().gridPx; const s=sc();
   if(!g || g*view.k<5 || !s) return;
@@ -2809,8 +2809,8 @@ function drawGrid(c,view,dpr,W,H,bright){
     for(let x=ox%g;x<=s.w;x+=g){ c.moveTo(x,0); c.lineTo(x,s.h); }
     for(let y=oy%g;y<=s.h;y+=g){ c.moveTo(0,y); c.lineTo(s.w,y); }
   }
-  c.strokeStyle = bright ? 'rgba('+PAL.measureRgb+',.85)' : 'rgba('+PAL.textRgb+',.10)';
-  c.lineWidth = (bright?1.4:0.5)/view.k;
+  c.strokeStyle = bright ? 'rgba('+PAL.measureRgb+',.85)' : 'rgba('+PAL.textRgb+',.20)';
+  c.lineWidth = (bright?1.4:1)/view.k;
   c.stroke();
   c.setTransform(dpr,0,0,dpr,0,0);
 }

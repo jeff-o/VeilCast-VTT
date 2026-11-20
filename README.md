@@ -18,6 +18,7 @@ stays on your own machine.
 - Added ambient light feature. there are now three light levels available: bright, dim, and dark.
 - lights now display a bright light radius and a dim light radius
 - players with darkvision/blindsight/truesight vision radius are surrounded by an area of colour and greyscale to indicate the radius of effect.
+- Display height and width can be independently set, allowing for use with displays other than 16:9, as well as portrait orientation (you still have to rotate the screen in your OS' display settings of course)
 
 ---
 

@@ -3033,7 +3033,13 @@ function drawTableFrame(c,view,dpr){
   const s=sc(); if(!s) return;
   const kT=tableScale(); if(!kT) return;
   c.setTransform(dpr,0,0,dpr,0,0);
-  const wW=T.W/kT, wH=T.H/kT;
+  
+  /*const wW=T.W/kT, wH=T.H/kT;*/
+  const physW = parseFloat($('dispWidth').value) || 0;
+  const physH = parseFloat($('dispHeight').value) || 0;
+  const wW = physW * cal().gridPx;
+  const wH = physH * cal().gridPx;
+  
   const x=(s.center.x-wW/2)*view.k+view.x, y=(s.center.y-wH/2)*view.k+view.y;
   c.save();
   c.strokeStyle = S.tool==='frame' ? PAL.frame : 'rgba('+PAL.frameRgb+',.55)';
@@ -4616,13 +4622,26 @@ function autoDpi(){
   $('dpiIn').value = T.dpi;
   updateTableInfo();
 }
-  
+
+/* Old function that udates the table based on dpi instead of actual width and height   
 function updateTableInfo(){
   $('tableInfo').textContent = tableOpen()
     ? (Math.round(T.W/T.dpi*10)/10)+'×'+(Math.round(T.H/T.dpi*10)/10)+' squares'
     : 'not open';
   draw();
 }
+*/
+
+/* calculate table based on actual width and height */
+function updateTableInfo(){
+  const w = parseFloat($('dispWidth').value) || 0;
+  const h = parseFloat($('dispHeight').value) || 0;
+  $('tableInfo').textContent = tableOpen()
+    ? (Math.round(w*10)/10)+'×'+(Math.round(h*10)/10)+' squares'
+    : 'not open';
+  draw();
+}
+
 function applyFilter(){
   if(tableOpen()) T.cv.style.filter='brightness('+T.bright+') contrast('+T.contrast+')';
 }

@@ -660,7 +660,8 @@
       <p class="eyebrow">Second screen</p>
       <button id="btnInstall" class="wide" style="display:none;margin-bottom:6px">Install as app</button>
       <button id="btnTable" class="wide">Open table view</button>
-      <label class="field"><span>Monitor diagonal</span><input id="diagIn" type="number" min="10" step="0.5" value="27"></label>
+      <label class="field"><span>Viewable width</span><input id="dispWidth" type="number" min="1" step="0.1" value="23.5"></label>
+      <label class="field"><span>Viewable height</span><input id="dispHeight" type="number" min="1" step="0.1" value="13.2"></label>      
       <label class="field"><span>Pixels per inch</span><input id="dpiIn" type="number" min="20" step="0.25" value="96"></label>
       <label class="field"><span>Detected resolution</span><span id="tableRes" style="font-family:var(--mono);font-size:11px;color:var(--text)">—</span></label>
       <label class="field"><span>Coverage</span><span id="tableInfo" style="font-family:var(--mono);font-size:11px;color:var(--text)">not open</span></label>
@@ -3332,7 +3333,7 @@ async function guardarEstado(){
     fx:{favoritos:CAT.favoritos, recientes:CAT.recientes, activas:CAT.activas},
     tokensMesa:S.tokensMesa, plegadas:S.plegadas||[], pasosNunca:!!S.pasosNunca,
     snap:S.snap, tema:S.tema||'ember', ui:S.ui||1, autoScaleMaps:S.autoScaleMaps,
-    mesa:{dpi:T.dpi, diag:parseFloat($('diagIn').value)||27, cover:T.cover,
+    mesa:{dpi:T.dpi, width:parseFloat($('dispWidth').value)||23.5, height:parseFloat($('dispHeight').value)||13.2, cover:T.cover,
           bright:T.bright, contrast:T.contrast, hpMode:S.ini.hpMode,
           diagHecha:!!T.diagHecha, mesaAbierta:!!T.mesaAbierta}});
 }
@@ -3813,7 +3814,7 @@ function renderPasos(){
     {ok: hitoCalibrado(),
      t:'Calibrate a square', d:'Press K and drag across one square of the map, so the app knows how big a square is.'},
     {ok: !!T.diagHecha,
-     t:'Set your monitor size', d:'In the Table tab, enter the diagonal of the screen lying on the table.'},
+     t:'Set your display size', d:'Enter the visible width and height of the table display.'},
     {ok: !!T.mesaAbierta,
      t:'Open the table view', d:'Drag it to that screen and click it for full screen.'}
   ];
@@ -4586,6 +4587,7 @@ function sizeTable(){
   if(sig!==T.lastScreen){ T.lastScreen=sig; autoDpi(); }
   draw();
 }
+/* Old autoDpi routine based on single diagonal measurement   
 function autoDpi(){
   const d=parseFloat($('diagIn').value);
   if(!tableOpen()||!d) return;
@@ -4593,6 +4595,28 @@ function autoDpi(){
   T.dpi=Math.round(Math.hypot(s.width,s.height)/d*100)/100;
   $('dpiIn').value=T.dpi; updateTableInfo();
 }
+*/
+
+/* New autoDpi based on separate height and width inputs */
+function autoDpi(){
+  const w=parseFloat($('dispWidth').value);
+  const h=parseFloat($('dispHeight').value);
+
+  if(!tableOpen() || !w || !h)
+    return;
+
+  const s=T.win.screen;
+  const ppiX = s.width  / w;
+  const ppiY = s.height / h;
+
+  T.dpi = Math.round(
+    ((ppiX + ppiY) / 2) * 100
+  ) / 100;
+
+  $('dpiIn').value = T.dpi;
+  updateTableInfo();
+}
+  
 function updateTableInfo(){
   $('tableInfo').textContent = tableOpen()
     ? (Math.round(T.W/T.dpi*10)/10)+'×'+(Math.round(T.H/T.dpi*10)/10)+' squares'
@@ -6104,9 +6128,18 @@ $('iniShow').onchange=e=>{ S.ini.show=e.target.checked; draw(); };
 $('iniCorner').onchange=e=>{ S.ini.corner=e.target.value; draw(); };
 $('iniSize').oninput=e=>{ S.ini.scale=e.target.value/100; $('iniSizeLbl').textContent=e.target.value+'%'; draw(); };
 $('iniHp').onchange=e=>{ S.ini.hpMode=e.target.value; draw(); };
-
 $('btnTable').onclick=()=>{ tableOpen()?closeTable():openTable(); };
-$('diagIn').oninput=()=>{ T.diagHecha=true; tocarEstado(); renderPasos(); autoDpi(); };
+
+/* short function to update the table height and width */
+function tableSizeChanged(){
+    T.diagHecha = true;
+    tocarEstado();
+    renderPasos();
+    autoDpi();
+}  
+$('dispWidth').oninput  = tableSizeChanged;
+$('dispHeight').oninput = tableSizeChanged; 
+  
 $('dpiIn').oninput=e=>{ T.dpi=Math.max(20,parseFloat(e.target.value)||96); tocarEstado(); updateTableInfo(); };
 $('btnTestGrid').onclick=()=>{ T.test=!T.test; $('btnTestGrid').classList.toggle('on',T.test); draw(); };
 $('btnFrame').onclick=()=>{ S.tool==='frame'?setTool('pan'):setTool('frame'); };
@@ -6206,7 +6239,7 @@ $('btnSave').onclick=async ()=>{
   const c=campActiva();
   const data={ v:6, campana:{name:c?c.name:'Campaign', players:jugadores()},
     ini:S.ini, idx:LIB.idx,
-    table:{dpi:T.dpi, diag:parseFloat($('diagIn').value)||27, cover:T.cover,
+    table:{dpi:T.dpi, width:parseFloat($('dispWidth').value)||23.5, height:parseFloat($('dispHeight').value)||13.2, cover:T.cover,
            bright:T.bright, contrast:T.contrast} , scenes:escenas };
   const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
   const a=document.createElement('a');
@@ -6255,7 +6288,7 @@ $('fileSes').onchange=e=>{
     if(d.table){
       T.dpi=d.table.dpi||T.dpi; T.cover=!!d.table.cover;
       T.bright=d.table.bright||1; T.contrast=d.table.contrast||1;
-      $('dpiIn').value=T.dpi; $('diagIn').value=d.table.diag||27; $('galCover').checked=T.cover;
+      $('dpiIn').value=T.dpi; $('dispWidth').value=d.table.width||23.5; $('dispHeight').value=d.table.height||13.2; $('galCover').checked=T.cover;
       $('brIn').value=Math.round(T.bright*100); $('coIn').value=Math.round(T.contrast*100);
       $('brLbl').textContent=Math.round(T.bright*100)+'%'; $('coLbl').textContent=Math.round(T.contrast*100)+'%';
       applyFilter();
@@ -6689,7 +6722,7 @@ async function arrancar(){
       if(st.mesa){
         T.dpi=st.mesa.dpi||T.dpi; T.cover=!!st.mesa.cover;
         T.bright=st.mesa.bright||1; T.contrast=st.mesa.contrast||1;
-        $('dpiIn').value=T.dpi; $('diagIn').value=st.mesa.diag||27; $('galCover').checked=T.cover;
+        $('dpiIn').value=T.dpi; $('dispWidth').value=st.mesa.width||23.5; $('dispHeight').value=st.mesa.height||13.2; $('galCover').checked=T.cover;
         $('brIn').value=Math.round(T.bright*100); $('coIn').value=Math.round(T.contrast*100);
         $('brLbl').textContent=Math.round(T.bright*100)+'%'; $('coLbl').textContent=Math.round(T.contrast*100)+'%';
         if(st.mesa.hpMode){ S.ini.hpMode=st.mesa.hpMode; $('iniHp').value=st.mesa.hpMode; }

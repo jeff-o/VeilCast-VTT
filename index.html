@@ -2581,7 +2581,7 @@ function drawDarkness(c, view, dpr, W, H){
    repartidos en círculo para el contorno libre). El punto donde cada rayo choca
    define el polígono de lo visible; lo que queda detrás de una pared no se revela. */
 
-const EPS = 0.0001;
+const EPS = 0.00005;
 /* Un rayo que arranca justo encima de una pared choca con ella a distancia cero y el
    polígono se cierra sobre el propio token: se quedaría ciego. Se exige avanzar algo
    antes de contar el choque, así que estar sobre un muro lo vuelve transparente en vez

@@ -5441,7 +5441,7 @@ cv.addEventListener('contextmenu', e=>{
 cv.addEventListener('dblclick',ev=>{
  if(S.lasso&&S.lasso.length>2) closeLasso();
  else if(S.wallDraft) cerrarPared();
- else if(S.tool==='oclusion'){
+ else if(S.tool==='oclusion' || S.tool==='sel'){
   const hit = paredEn(
     s2w(evPos(ev)),
     10/S.view.k

@@ -1807,6 +1807,7 @@ function drawParedes(c, view, dpr, o){
       const [a,b] = segPts(w,i);
       const abierto = segAbierto(w,i);
       const sel = segSeleccionado(w,i);
+      const esPuerta = !!w.puerta;
       c.beginPath();
       c.moveTo(a.x,a.y); c.lineTo(b.x,b.y);
       c.strokeStyle = abierto ? 'rgba('+PAL.frameRgb+',.85)'
@@ -1815,6 +1816,19 @@ function drawParedes(c, view, dpr, o){
       if(abierto) c.setLineDash([9/view.k,7/view.k]);
       c.stroke();
       c.setLineDash([]);
+      
+      if(esPuerta){
+        const mx = (a.x + b.x) / 2;
+        const my = (a.y + b.y) / 2;
+
+        c.beginPath();
+        c.arc(mx, my, (sel ? 6 : 5) / view.k, 0, Math.PI * 2);
+        c.fillStyle = abierto ? 'rgba('+PAL.frameRgb+',.95)' : '#4DA6FF';
+        c.fill();
+        c.strokeStyle = '#000';
+        c.lineWidth = 1 / view.k;
+        c.stroke();
+      }
 
       /* Un tramo de un solo sentido lleva marcas cortas por el lado desde el que tapa:
          el normal (-sy, sx) apunta al lado positivo, y dir elige cuál de los dos. */

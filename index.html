@@ -1681,13 +1681,13 @@ function segsDe(w){
   if(!Array.isArray(w.segs)){
     const abiertos = Array.isArray(w.abiertos) ? w.abiertos
                    : (w.abierta ? Array.from({length:n},(_,i)=>i) : []);
-    w.segs = Array.from({length:n}, (_,i)=>({abierto: abiertos.includes(i), dir:0}));
+    w.segs = Array.from({length:n}, (_,i)=>({abierto: abiertos.includes(i), dir:0, puerta: !!w.puerta}));
     delete w.abierta; delete w.abiertos;
   }
   /* Si cambia el número de vértices se conserva lo que encaje por índice. */
   if(w.segs.length !== n){
     const viejo = w.segs;
-    w.segs = Array.from({length:n}, (_,i)=>viejo[i] || {abierto:false, dir:0});
+    w.segs = Array.from({length:n}, (_,i)=>viejo[i] || {abierto:false, dir:0, puerta:false});
   }
   return w.segs;
 }
@@ -1822,7 +1822,8 @@ function drawParedes(c, view, dpr, o){
         const my = (a.y + b.y) / 2;
 
         c.beginPath();
-        c.arc(mx, my, (sel ? 6 : 5) / view.k, 0, Math.PI * 2);
+        const r = Math.max(5, (cal().gridPx || 50) * 0.07);
+        c.arc(mx, my, sel ? r * 1.25 : r, 0, Math.PI * 2);
         c.fillStyle = abierto ? 'rgba('+PAL.frameRgb+',.95)' : '#4DA6FF';
         c.fill();
         c.strokeStyle = '#000';

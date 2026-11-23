@@ -1710,7 +1710,16 @@ function paredEn(wp, tol){
     const w=lista[k], n=segCount(w);
     for(let i=0;i<n;i++){
       const [a,b]=segPts(w,i);
-      if(distPuntoSegmento(wp,a,b)<=tol) return {pared:w, seg:i};
+      const seg = segsDe(w)[i];
+      if(seg.puerta){
+          const mx = (a.x + b.x) / 2;
+          const my = (a.y + b.y) / 2;
+          const r = Math.max(5, (cal().gridPx || 50) * 0.07);
+          if(Math.hypot(wp.x - mx, wp.y - my) <= r)
+            return {pared:w, seg:i};
+      }
+    if(distPuntoSegmento(wp,a,b) <= tol)
+        return {pared:w, seg:i};
     }
   }
   return null;
@@ -1752,7 +1761,8 @@ function huellaParedes(){
     h = (h*31 + w.pts.length + (w.closed?1:0))|0;
     for(const p of w.pts) h = (h*31 + Math.round(p.x*4)*7 + Math.round(p.y*4))|0;
     if(Array.isArray(w.segs))
-      for(const t of w.segs) h = (h*31 + (t.abierto?1:0) + (t.dir||0)*3)|0;
+      for(const t of w.segs)
+        h = (h*31 + (t.abierto ? 1 : 0) + (t.dir || 0) * 3 + (t.puerta ? 7 : 0))|0;
   }
   return h;
 }
@@ -5429,15 +5439,45 @@ cv.addEventListener('contextmenu', e=>{
   abrirMapMenu(sp, titulo, items);
 });
 cv.addEventListener('dblclick',ev=>{
-  if(S.lasso&&S.lasso.length>2) closeLasso();
-  else if(S.wallDraft) cerrarPared();
-  else if(S.tool==='oclusion'){
-    /* Doble clic toma el muro entero: es lo que se quiere para poner en un sentido
-       un pasillo largo o todos los lados de una sala. */
-    const w=paredEn(s2w(evPos(ev)), 10/S.view.k);
-    if(w){ seleccionarPared(w.pared); syncCtxBar(); draw();
-           toast(segCount(w.pared)+' segments selected.'); }
+ if(S.lasso&&S.lasso.length>2) closeLasso();
+ else if(S.wallDraft) cerrarPared();
+ else if(S.tool==='oclusion'){
+  const hit = paredEn(
+    s2w(evPos(ev)),
+    10/S.view.k
+  );
+
+  if(hit){
+    const seg = segsDe(hit.pared)[hit.seg];
+    if(seg.puerta){
+      push('walls');
+      seg.abierto = !seg.abierto;
+      tocarEscena();
+      recalcularVision();
+      syncCtxBar();
+      draw();
+      toast(
+        seg.abierto
+          ? 'Door opened.'
+          : 'Door closed.'
+      );
+      return;
+    }
   }
+
+  /* Doble clic toma el muro entero: es lo que se quiere para poner en un sentido
+     un pasillo largo o todos los lados de una sala. */
+  const w = paredEn(s2w(evPos(ev)), 10/S.view.k);
+  if(w){
+    seleccionarPared(w.pared);
+    syncCtxBar();
+    draw();
+    toast(
+      segCount(w.pared) +
+      ' segments selected.'
+    );
+  }
+ }
 });
 cv.addEventListener('wheel',e=>{ e.preventDefault(); zoomAt(e.clientX,e.clientY,e.deltaY<0?1.12:1/1.12); },{passive:false});
 

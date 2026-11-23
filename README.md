@@ -19,6 +19,7 @@ stays on your own machine.
 - lights now display a bright light radius and a dim light radius
 - players with darkvision/blindsight/truesight vision radius are surrounded by an area of colour and greyscale to indicate the radius of effect.
 - Display height and width can be independently set, allowing for use with displays other than 16:9, as well as portrait orientation (you still have to rotate the screen in your OS' display settings of course)
+- Doors are marked with a dot that can be double-clicked to be quickly opened and closed.
 
 ---
 

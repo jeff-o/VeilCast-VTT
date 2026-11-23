@@ -840,6 +840,7 @@
     </span>
     <span class="sepv"></span>
     <span class="cl" role="group" aria-label="Selected segments">
+      <button id="wallTipoPuerta" class="ghost">Door / Wall</button>
       <button id="wallPuerta" class="ghost">Open / close</button>
       <button id="wallDir" class="ghost" title="Cycle which side this segment blocks from">One-way</button>
       <button id="wallBorrar" class="ghost danger">Delete wall <kbd>Del</kbd></button>
@@ -1807,7 +1808,7 @@ function drawParedes(c, view, dpr, o){
       const [a,b] = segPts(w,i);
       const abierto = segAbierto(w,i);
       const sel = segSeleccionado(w,i);
-      const esPuerta = !!w.puerta;
+      const esPuerta = !!segsDe(w)[i].puerta;
       c.beginPath();
       c.moveTo(a.x,a.y); c.lineTo(b.x,b.y);
       c.strokeStyle = abierto ? 'rgba('+PAL.frameRgb+',.85)'
@@ -5898,6 +5899,41 @@ $('wallPuerta').onclick=()=>{
               : (n>1 ? n+' segments closed: blocking again.'
                      : 'Door closed: this segment blocks again.'));
 };
+
+$('wallTipoPuerta').onclick=()=>{
+ if(!S.selParedes.length){
+  toast('Tap a wall segment first.');
+  return;
+ }
+ push('walls');
+
+ /* If any selected segment is not a door,
+    convert all selected segments into doors.
+    Otherwise convert them all back into walls. */
+
+ const hacerPuerta =
+  S.selParedes.some(
+   t => !segsDe(t.pared)[t.seg].puerta
+  );
+
+ for(const t of S.selParedes)
+  segsDe(t.pared)[t.seg].puerta = hacerPuerta;
+
+ tocarEscena();
+ draw();
+ syncCtxBar();
+ const n = S.selParedes.length;
+ toast(
+  hacerPuerta
+   ? (n>1
+      ? n+' segments marked as doors.'
+      : 'Segment marked as a door.')
+   : (n>1
+      ? n+' segments marked as walls.'
+      : 'Segment marked as a wall.')
+ );
+};
+
 /* Un muro puede bloquear por los dos lados, solo por uno, o solo por el otro. */
 $('wallDir').onclick=()=>{
   if(!S.selParedes.length){ toast('Tap a wall segment to make it one-way.'); return; }
